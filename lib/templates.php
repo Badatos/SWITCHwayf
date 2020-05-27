@@ -277,6 +277,7 @@ function getPermanentUserIdp()
 // Prints end of HTML page
 function printFooter()
 {
+    global $customStrings;
     include(get_template('footer.php'));
 }
 
