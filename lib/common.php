@@ -91,3 +91,10 @@ if (isset($_COOKIE[$SAMLDomainCookieName])) {
 } else {
     $IDPArray = array();
 }
+
+/*------------------------------------------------*/
+// Set CORS
+/*------------------------------------------------*/
+global $allowedCORSDomain;
+
+header('Access-Control-Allow-Origin: '.$allowedCORSDomain);
