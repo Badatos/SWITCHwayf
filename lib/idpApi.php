@@ -7,14 +7,24 @@
 
 $topLevelDir = dirname(__DIR__);
 
+require_once($topLevelDir . '/lib/functions.php');
+
 require('common.php');
 require('idpApiObjects.php');
 
 header('Content-Type: application/json');
 
-global $allowedCORSDomain;
+if (array_key_exists("idpCookie", $_GET)) {
+    // Small tweks, because for unknown reason, the cookie value provided in GET
+    // param is not formatted as in regular cookie.
+    $idpCookie = str_replace(
+        array("%3D", "%2B", "+"),
+        array("=", " ", " "),
+        $_GET["idpCookie"]
+      );
 
-header('Access-Control-Allow-Origin: '.$allowedCORSDomain);
+    $IDPArray = getIdPArrayFromValue($idpCookie);
+}
 
 $repo = new IdpRepository($IDProviders, $IDPArray);
 

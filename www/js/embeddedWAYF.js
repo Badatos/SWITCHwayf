@@ -745,7 +745,18 @@
           data: function(params) {
             var query = {
               search: params.term,
-              page: params.page || 1
+              page: params.page || 1,
+            }
+
+            var saml_idp_cookie = getCookie('_saml_idp');
+
+            if (saml_idp_cookie && saml_idp_cookie.length > 0) {
+
+              var query = {
+                search: params.term,
+                page: params.page || 1,
+                idpCookie: saml_idp_cookie
+              }
             }
             // Query parameters will be ?search=[term]&page=[page]
             return query;
