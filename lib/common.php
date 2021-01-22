@@ -33,8 +33,8 @@ if (file_exists($topLevelDir . '/lib/custom-languages.php')) {
 /*------------------------------------------------*/
 if ($developmentMode) {
     ini_set('error_reporting', E_ALL);
-    ini_set('display_errors', 'On');
-    ini_set('log_erros', 'Off');
+    ini_set('display_errors', 'Off');
+    ini_set('log_errors', 'On');
 } else {
     error_reporting(0);
 }
