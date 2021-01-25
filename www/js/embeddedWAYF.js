@@ -737,6 +737,8 @@
     select2Translation.onload = function() {
       console.log("Select2 Translation loaded !");
 
+      var saml_idp_cookie = getCookie('_saml_idp');
+
       $('.userIdPSelection').select2({
         ajax: {
           url: <?php echo "'".$apiURL."/idps'" ?>,
@@ -748,10 +750,7 @@
               page: params.page || 1,
             }
 
-            var saml_idp_cookie = getCookie('_saml_idp');
-
             if (saml_idp_cookie && saml_idp_cookie.length > 0) {
-
               var query = {
                 search: params.term,
                 page: params.page || 1,
@@ -783,7 +782,31 @@
       $('.userIdPSelection').on('select2:select', function(e) {
         document.getElementById("IdPList").submit();
       });
+      // Preselect last used IdP
+      // Fetch the preselected item, and add to the control
+      var idpSelect = $('.userIdPSelection');
 
+      // if (saml_idp_cookie && saml_idp_cookie.length > 0) {
+      //   $.ajax({
+      //     type: 'GET',
+      //     url: <?php echo "'".$apiURL."/idps?lastIdp'" ?>,
+      //   }).then(function(data) {
+      //     // create the option and append to Select2
+      //     var option = new Option(data.name, data.id, true, true);
+      //     idpSelect.append(option).trigger('change');
+      //   });
+      // } else {
+      $.ajax({
+        type: 'GET',
+        url: <?php echo "'".$apiURL."/idps?lastIdp&idpCookie='+"."saml_idp_cookie" ?>,
+      }).then(function(data) {
+        // create the option and append to Select2
+        // in order ot pass all info from data, we pass it in JSON String as
+        // text, ans select2Functions will build it back
+        var option = new Option(JSON.stringify(data), data.id, true, true);
+        idpSelect.append(option).trigger('change');
+      });
+      // }
     };
     head.appendChild(select2Translation);
 
