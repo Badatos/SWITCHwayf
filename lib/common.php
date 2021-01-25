@@ -19,6 +19,7 @@ if (isset($_SERVER{'SWITCHWAYF_CONFIG'})) {
 require_once($topLevelDir . '/lib/languages.php');
 require_once($topLevelDir . '/lib/functions.php');
 require_once($topLevelDir . '/lib/templates.php');
+require_once($topLevelDir . '/lib/idpApiObjects.php');
 
 // Set default config options
 initConfigOptions();
@@ -91,6 +92,24 @@ if (isset($_COOKIE[$SAMLDomainCookieName])) {
 } else {
     $IDPArray = array();
 }
+
+/*------------------------------------------------*/
+// Initialize IdpRepository (for API)
+/*------------------------------------------------*/
+
+if (array_key_exists("idpCookie", $_GET)) {
+    // Small tweaks, because for unknown reason, the cookie value provided in GET
+    // param is not formatted as in regular cookie.
+    $idpCookie = str_replace(
+        array("%3D", "%2B", "+"),
+        array("=", " ", " "),
+        $_GET["idpCookie"]
+      );
+
+    $IDPArray = getIdPArrayFromValue($idpCookie);
+}
+
+$idpRepository = new IdpRepository($IDProviders, $IDPArray);
 
 /*------------------------------------------------*/
 // Set CORS
