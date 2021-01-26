@@ -122,9 +122,10 @@
             // create the option and append to Select2
             // in order ot pass all info from data, we pass it in JSON String as
             // text, ans select2Functions will build it back
-            var option = new Option(JSON.stringify(data), data.id, true, true);
-            idpSelect.append(option).trigger('change');
-
+            if(data.id != null) {
+              var option = new Option(JSON.stringify(data), data.id, true, true);
+              idpSelect.append(option).trigger('change');
+            }
         });
 		<?php
     } elseif ($bodyType == "notice" && $permanentUserIdP != '') {

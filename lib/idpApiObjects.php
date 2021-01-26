@@ -116,6 +116,7 @@ final class IdpRepository
     // The idps in the form of IdpObject
     public $idpObjects = array();
     public $lastIdps = array();
+    public $categories = array();
 
     public function __construct(array $IDProviders = array(), array $previouslySelectedIdps = null)
     {
@@ -145,6 +146,7 @@ final class IdpRepository
 
             // Skip categories
             if ($value['Type'] == 'category') {
+                $this->categories[$key] = $value;
                 continue;
             }
 
@@ -178,7 +180,8 @@ final class IdpRepository
 
             if (!isset($tmp[$type])) {
                 $group = new IdpGroup();
-                $group->text = $type;
+                // $group->text = $type;
+                $group->text = $this->categories[$type]['Name'];
                 $tmp[$type] = $group;
                 $group->hide = $hideFirstGroup && ($type == $firstGroupName);
             }
