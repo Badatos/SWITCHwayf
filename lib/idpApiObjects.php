@@ -123,6 +123,10 @@ final class IdpRepository
         global $showNumOfPreviouslyUsedIdPs;
 
 
+        $this->categories['last_used'] = array(
+            'Name' => getLocalString('last_used'),
+        );
+
         if (isset($previouslySelectedIdps) && count($previouslySelectedIdps) > 0) {
             $counter = (isset($showNumOfPreviouslyUsedIdPs)) ? $showNumOfPreviouslyUsedIdPs : 3;
             for ($n = count($previouslySelectedIdps) - 1; $n >= 0; $n--) {
@@ -133,7 +137,8 @@ final class IdpRepository
                 $selIdp = $previouslySelectedIdps[$n];
                 if (isset($IDProviders[$selIdp])) {
                     $idp = new IdpObject($selIdp, $IDProviders[$selIdp]);
-                    $idp->type = getLocalString('last_used');
+
+                    $idp->type = 'last_used';
                     $this->idpObjects[] = $idp;
                     $this->lastIdps[] = $idp;
 
@@ -231,7 +236,7 @@ final class IdpRepository
         }
         $result{"results"} = $this->toGroups($idpPage, $hideFirstGroup);
 
-        $result{"pagination"}{"more"} = (($pageNumber + 1)*$pageSize <= sizeof($array));
+        $result{"pagination"}{"more"} = ($pageNumber * $pageSize < sizeof($array));
 
         return json_encode($result, JSON_UNESCAPED_SLASHES);
     }

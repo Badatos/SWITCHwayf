@@ -17,7 +17,7 @@ function formatIdpNotice(idp) {
 }
 
 function doFormatIdp(idp, logo) {
-  if (idp.text.startsWith('{')) {
+  if (idp.text != null && idp.text.startsWith('{')) {
     idp = JSON.parse(idp.text);
     logo = idp.logo;
   }
