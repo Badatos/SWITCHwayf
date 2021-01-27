@@ -111,9 +111,9 @@
           escapeMarkup: function (text) { return text; }
         });
         // Auto-submit when an idp is selected
-        $('.userIdPSelection').on('select2:select', function (e) {
-          document.getElementById("IdPList").submit();
-        });
+        // $('.userIdPSelection').on('select2:select', function (e) {
+        //   document.getElementById("IdPList").submit();
+        // });
         // Preselect last used IdP
         // Fetch the preselected item, and add to the control
         var idpSelect = $('.userIdPSelection');
