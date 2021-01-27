@@ -1149,11 +1149,22 @@ function isUseSelect2()
 {
     global $useSelect2;
 
-    if (!isset($_GET["useSelect2"])) {
-        return $useSelect2;
+    if (isRequestType('embedded-wayf.js')) {
+        if (isset($_GET["useSelect2"])) {
+            return $_GET["useSelect2"] == "true";
+        }
+        return false;
     }
 
-    return $_GET["useSelect2"];
+    return $useSelect2;
+}
+
+function isUseSelect2Str()
+{
+    if (isUseSelect2()) {
+        return "true";
+    }
+    return "false";
 }
 
 function getSelect2PageSize()

@@ -66,6 +66,7 @@
 // Enabling this will use JavaScript to convert the select element containing
 // all Identity Providers to a searchable search-as-you-type list that also
 // displays logos if available
+// Please note that select2 activation superseeds improveDropDown activation
 //$useImprovedDropDownList = true;
 
   // If true the improved drop-down-list will not display logos that

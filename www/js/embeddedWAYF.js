@@ -29,7 +29,7 @@
   // Other settings
   var wayf_use_discovery_service = global.wayf_use_discovery_service;
   var wayf_use_improved_drop_down_list = global.wayf_use_improved_drop_down_list;
-  var wayf_use_select2 = global.wayf_use_select2;
+  var wayf_use_select2 = <?php echo isUseSelect2Str() ?>;
   var wayf_select2_page_size = global.wayf_select2_page_size;
   var wayf_disable_remote_idp_logos = global.wayf_disable_remote_idp_logos;
   var wayf_enable_entityid_matching = global.wayf_enable_entityid_matching;
