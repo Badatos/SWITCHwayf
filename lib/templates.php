@@ -26,10 +26,7 @@ function printHeader($bodyType)
     global $federationURL, $organizationURL, $faqURL, $helpURL, $privacyURL;
     global $customStrings;
     global $developmentMode, $apiURL;
-    global $permanentUserIdP, $permanentUserIdPName, $permanentUserIdPLogo;
     global $IDProviders;
-
-    $permanentUserIdP = getPermanentUserIdp();
 
     include(get_template('header.php'));
 }
@@ -277,6 +274,7 @@ function getPermanentUserIdp()
 // Prints end of HTML page
 function printFooter()
 {
+    global $customStrings;
     include(get_template('footer.php'));
 }
 

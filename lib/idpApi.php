@@ -7,25 +7,25 @@
 
 $topLevelDir = dirname(__DIR__);
 
+require_once($topLevelDir . '/lib/functions.php');
+
 require('common.php');
-require('idpApiObjects.php');
 
 header('Content-Type: application/json');
 
-global $allowedCORSDomain;
-
-header('Access-Control-Allow-Origin: '.$allowedCORSDomain);
-
-$repo = new IdpRepository($IDProviders, $IDPArray);
+global $idpRepository;
 
 if (array_key_exists("page", $_GET)) {
     if (array_key_exists("search", $_GET)) {
         //error_log("Search with request ".$_GET["search"]);
-        echo $repo->toJsonByQuery($_GET["search"], $_GET["page"], getSelect2PageSize());
+        echo $idpRepository->toJsonByQuery($_GET["search"], $_GET["page"], getSelect2PageSize());
     } else {
         //error_log("Search page ".$_GET["page"]);
-        echo $repo->toJsonByPage($_GET["page"], getSelect2PageSize());
+        echo $idpRepository->toJsonByPage($_GET["page"], getSelect2PageSize());
     }
+} elseif (array_key_exists("lastIdp", $_GET)) {
+    // Provide lastUsedIdp
+    echo $idpRepository->getLastUsedIdpJson();
 } else {
-    echo $repo->toJson();
+    echo $idpRepository->toJson();
 }

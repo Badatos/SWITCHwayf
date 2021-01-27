@@ -114,6 +114,21 @@
         $('.userIdPSelection').on('select2:select', function (e) {
           document.getElementById("IdPList").submit();
         });
+        // Preselect last used IdP
+        // Fetch the preselected item, and add to the control
+        var idpSelect = $('.userIdPSelection');
+        $.ajax({
+            type: 'GET',
+            url: <?php echo "'".$apiURL."/idps?lastIdp'" ?>,
+        }).then(function (data) {
+            // create the option and append to Select2
+            // in order ot pass all info from data, we pass it in JSON String as
+            // text, ans select2Functions will build it back
+            if(data.id != null) {
+              var option = new Option(JSON.stringify(data), data.id, true, true);
+              idpSelect.append(option).trigger('change');
+            }
+        });
 		<?php
     } elseif ($bodyType == "notice" && $permanentUserIdP != '') {
         ?>
