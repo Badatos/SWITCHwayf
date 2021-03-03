@@ -150,7 +150,7 @@ final class IdpRepository
         foreach ($IDProviders as $key => $value) {
 
             // Skip categories
-            if ($value['Type'] == 'category') {
+            if (isset($value['Type']) && $value['Type'] == 'category') {
                 $this->categories[$key] = $value;
                 continue;
             }
@@ -159,6 +159,14 @@ final class IdpRepository
             if (!is_array($value) || !isset($value['Name'])) {
                 continue;
             }
+
+	    // Remove the following keys from $value:
+	    // NameForSort
+            // IndexForSort
+	    // TypeForSort
+            unset($value['NameForSort']);
+            unset($value['IndexForSort']);
+            unset($value['TypeForSort']);
 
             $idp = new IdpObject($key, $value);
             $this->idpObjects[] = $idp;

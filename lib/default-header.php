@@ -15,7 +15,7 @@
 	<?php
 
     if (isUseSelect2()) {
-        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.css" type="text/css" >'.PHP_EOL;
+        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.min.css" type="text/css" >'.PHP_EOL;
         // Version of select2 : 4.0.6-rc.0
         // Availability https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js
         // Languages available at https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/i18n/<2letterCode>.js

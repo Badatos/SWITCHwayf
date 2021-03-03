@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 
 require("../lib/idpApiObjects.php");
-//sortIdentityProviders($IDProviders);
+require("../lib/readMetadata.php");
 
 function time_elapsed($message)
 {
@@ -22,16 +22,35 @@ final class IdpApiTest extends TestCase
 {
     public function testSort()
     {
+	$customStrings = array(
+    		'federationName' => 'Fédération eduGAIN',
+    		'providersIdPId' => 'https://dev-idp-fournisseurs.renater.fr/idp/shibboleth',
+   		 'supdataIdPId'   => 'https://dev-idp-supdata.renater.fr/idp/shibboleth'
+	);
         time_elapsed("[Sort] Init");
 
+	$IDProviders = array();
+$IDProviders['unknown'] = array (
+    'Name' => $customStrings['federationName'],
+    'Type' => 'category'
+);
+
+$IDProviders['external'] = array (
+    'Name' => getLocalString('external'),
+    'Type' => 'category'
+);
+	$language="fr";
         require("edugain-IDProvider.metadata.php");
-        $IDProviders = $metadataIDProviders;
+	$IDProviders = mergeInfo($IDProviders, $metadataIDProviders, true, true);
 
         time_elapsed("[Sort] doSort");
 
         sortIdentityProviders($IDProviders);
 
         time_elapsed("[Sort] endSort");
+         $repo = new IdpRepository($metadataIDProviders);
+    
+        time_elapsed("[GetFirstPage] Creating repository");
     }
 
     // public function testGetFirstPage()
