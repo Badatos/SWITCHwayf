@@ -1057,16 +1057,11 @@ function sortUsingTypeIndexAndName($a, $b)
     global $language;
 
     if (isset($a['TypeForSort']) && isset($b['TypeForSort']) &&  $a['TypeForSort'] != $b['TypeForSort']) {
-        //return strcasecmp(removeAccents($a['Type']), removeAccents($b['Type']));
         return strcasecmp($a['TypeForSort'], $b['TypeForSort']);
     } elseif (isset($a['IndexForSort']) && isset($b['IndexForSort']) && $a['IndexForSort'] != $b['IndexForSort']) {
-        //return strcasecmp(removeAccents($a['Index']), removeAccents($b['Index']));
         return strcasecmp($a['IndexForSort'], $b['IndexForSort']);
     } else {
         // Sort using locale names
-        //$localNameB = (isset($a[$language]['Name'])) ? $a[$language]['Name'] : $a['Name'];
-        //$localNameA = (isset($b[$language]['Name'])) ? $b[$language]['Name'] : $b['Name'];
-        //return strcasecmp(removeAccents($localNameB), removeAccents($localNameA));
         return strcasecmp($a['NameForSort'], $b['NameForSort']);
     }
 }
@@ -1083,8 +1078,6 @@ function removeAccents($string)
         $nonAccents,
         $string
         );
-
-//return $string;
 }
 
 
