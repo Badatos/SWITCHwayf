@@ -963,16 +963,18 @@ function convertToShibDSStructure($IDProviders)
 // Sorts the IDProviders array
 function sortIdentityProviders(&$IDProviders)
 {
+    global $language;
     $orderedCategories = array();
 
     // Create array with categories and IdPs in categories
     $unknownCategory = array();
     foreach ($IDProviders as $entityId => $IDProvider) {
         // Add categories
-        if ($IDProvider['Type'] == 'category') {
+        if (isset($IDProvider['Type']) && $IDProvider['Type'] == 'category') {
             $orderedCategories[$entityId]['data'] = $IDProvider;
         }
     }
+
 
     // Add category 'unknown' if not present
     if (!isset($orderedCategories['unknown'])) {
@@ -985,7 +987,7 @@ function sortIdentityProviders(&$IDProviders)
     foreach ($IDProviders as $entityId => $IDProvider) {
 
         // Skip categories
-        if ($IDProvider['Type'] == 'category') {
+        if (isset($IDProvider['Type']) && $IDProvider['Type'] == 'category') {
             continue;
         }
 
@@ -1001,6 +1003,16 @@ function sortIdentityProviders(&$IDProviders)
 
         // Add IdP
         $orderedCategories[$IDProvider['Type']]['IdPs'][$entityId] = $IDProvider;
+
+	if (isset($IDProvider['Type'])) {
+            $orderedCategories[$IDProvider['Type']]['IdPs'][$entityId]['TypeForSort'] = removeAccents($IDProvider['Type']);
+        }
+        if (isset($IDProvider['Index'])) {
+            $orderedCategories[$IDProvider['Type']]['IdPs'][$entityId]['IndexForSort'] = removeAccents($IDProvider['Index']);
+        }
+
+        $localName = (isset($IDProvider[$language]['Name'])) ? $IDProvider[$language]['Name'] : $IDProvider['Name'];
+        $orderedCategories[$IDProvider['Type']]['IdPs'][$entityId]['NameForSort'] = removeAccents($localName);
     }
 
     // Relocate all IdPs for which no category with a name was defined
@@ -1047,15 +1059,13 @@ function sortUsingTypeIndexAndName($a, $b)
 {
     global $language;
 
-    if ($a['Type'] != $b['Type']) {
-        return strcasecmp(removeAccents($a['Type']), removeAccents($b['Type']));
-    } elseif (isset($a['Index']) && isset($b['Index']) && $a['Index'] != $b['Index']) {
-        return strcasecmp(removeAccents($a['Index']), removeAccents($b['Index']));
+    if (isset($a['TypeForSort']) && isset($b['TypeForSort']) &&  $a['TypeForSort'] != $b['TypeForSort']) {
+        return strcasecmp($a['TypeForSort'], $b['TypeForSort']);
+    } elseif (isset($a['IndexForSort']) && isset($b['IndexForSort']) && $a['IndexForSort'] != $b['IndexForSort']) {
+        return strcasecmp($a['IndexForSort'], $b['IndexForSort']);
     } else {
         // Sort using locale names
-        $localNameB = (isset($a[$language]['Name'])) ? $a[$language]['Name'] : $a['Name'];
-        $localNameA = (isset($b[$language]['Name'])) ? $b[$language]['Name'] : $b['Name'];
-        return strcasecmp(removeAccents($localNameB), removeAccents($localNameA));
+        return strcasecmp($a['NameForSort'], $b['NameForSort']);
     }
 }
 
@@ -1063,6 +1073,7 @@ function sortUsingTypeIndexAndName($a, $b)
 // Return given Strring without accents
 function removeAccents($string)
 {
+
     $accents =    array("À","Á","Â","Ã","Ä","Å","à","á","â","ã","ä","å","Ò","Ó","Ô","Õ","Ö","Ø","ò","ó","ô","õ","ö","ø","È","É","Ê","Ë","è","é","ê","ë","Ç","ç","Ì","Í","Î","Ï","ì","í","î","ï","Ù","Ú","Û","Ü","ù","ú","û","ü","ÿ","Ñ","ñ");
     $nonAccents = array("a","a","a","a","a","a","a","a","a","a","a","a","o","o","o","o","o","o","o","o","o","o","o","o","e","e","e","e","e","e","e","e","c","c","i","i","i","i","i","i","i","i","u","u","u","u","u","u","u","u","y","n","n");
     return str_replace(
@@ -1152,11 +1163,22 @@ function isUseSelect2()
 {
     global $useSelect2;
 
-    if (!isset($_GET["useSelect2"])) {
-        return $useSelect2;
+    if (isRequestType('embedded-wayf.js')) {
+        if (isset($_GET["useSelect2"])) {
+            return $_GET["useSelect2"] == "true";
+        }
+        return false;
     }
 
-    return $_GET["useSelect2"];
+    return $useSelect2;
+}
+
+function isUseSelect2Str()
+{
+    if (isUseSelect2()) {
+        return "true";
+    }
+    return "false";
 }
 
 function getSelect2PageSize()

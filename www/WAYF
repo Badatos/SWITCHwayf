@@ -365,16 +365,6 @@ if ($hintedCookieIdP != '-') {
     $selectedIDP = '-';
 }
 
-// /*------------------------------------------------*/
-// // Sort Identity Providers
-// /*------------------------------------------------*/
-//
-// if ($useSAML2Metadata) {
-//     // Only automatically sort if list of Identity Provider is parsed
-//     // from metadata instead of being manualy managed
-//     sortIdentityProviders($IDProviders);
-// }
-
 /*------------------------------------------------*/
 // Draw WAYF
 /*------------------------------------------------*/
@@ -468,6 +458,12 @@ if (
     header('Content-Type: text/css');
 
     printCSS('select2.css');
+
+    exit;
+} elseif (isRequestType('select2.min.css')) {
+    header('Content-Type: text/css');
+
+    printCSS('select2.min.css');
 
     exit;
 } elseif (isRequestType('snippet.html')) {

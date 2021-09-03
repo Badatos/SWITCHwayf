@@ -115,11 +115,17 @@ final class IdpRepository
 {
     // The idps in the form of IdpObject
     public $idpObjects = array();
+    public $lastIdps = array();
+    public $categories = array();
 
     public function __construct(array $IDProviders = array(), array $previouslySelectedIdps = null)
     {
         global $showNumOfPreviouslyUsedIdPs;
 
+
+        $this->categories['last_used'] = array(
+            'Name' => getLocalString('last_used'),
+        );
 
         if (isset($previouslySelectedIdps) && count($previouslySelectedIdps) > 0) {
             $counter = (isset($showNumOfPreviouslyUsedIdPs)) ? $showNumOfPreviouslyUsedIdPs : 3;
@@ -129,12 +135,13 @@ final class IdpRepository
                 }
 
                 $selIdp = $previouslySelectedIdps[$n];
-
-                $selIdp = $previouslySelectedIdps[$n];
                 if (isset($IDProviders[$selIdp])) {
                     $idp = new IdpObject($selIdp, $IDProviders[$selIdp]);
-                    $idp->type = getLocalString('last_used');
+
+                    $idp->type = 'last_used';
                     $this->idpObjects[] = $idp;
+                    $this->lastIdps[] = $idp;
+
                     $counter--;
                 }
             }
@@ -143,7 +150,8 @@ final class IdpRepository
         foreach ($IDProviders as $key => $value) {
 
             // Skip categories
-            if ($value['Type'] == 'category') {
+            if (isset($value['Type']) && $value['Type'] == 'category') {
+                $this->categories[$key] = $value;
                 continue;
             }
 
@@ -151,6 +159,14 @@ final class IdpRepository
             if (!is_array($value) || !isset($value['Name'])) {
                 continue;
             }
+
+	    // Remove the following keys from $value:
+	    // NameForSort
+            // IndexForSort
+	    // TypeForSort
+            unset($value['NameForSort']);
+            unset($value['IndexForSort']);
+            unset($value['TypeForSort']);
 
             $idp = new IdpObject($key, $value);
             $this->idpObjects[] = $idp;
@@ -177,7 +193,8 @@ final class IdpRepository
 
             if (!isset($tmp[$type])) {
                 $group = new IdpGroup();
-                $group->text = $type;
+                // $group->text = $type;
+                $group->text = $this->categories[$type]['Name'];
                 $tmp[$type] = $group;
                 $group->hide = $hideFirstGroup && ($type == $firstGroupName);
             }
@@ -224,12 +241,10 @@ final class IdpRepository
             $lastPageLastGroup = $this->idpObjects[$pageNumber * $pageSize - 1]->type;
             $thisPageFirstGroup = $this->idpObjects[$pageNumber * $pageSize]->type;
             $hideFirstGroup = ($lastPageLastGroup == $thisPageFirstGroup);
-            // logInfo(sprintf("lastPageLastGroup = %s / thisPageFirstGroup = %s", $lastPageLastGroup, $thisPageFirstGroup));
         }
-        // logInfo(sprintf("hideFirstGroup = %s", $hideFirstGroup?"true":"false"));
         $result{"results"} = $this->toGroups($idpPage, $hideFirstGroup);
 
-        $result{"pagination"}{"more"} = (($pageNumber + 1)*$pageSize <= sizeof($array));
+        $result{"pagination"}{"more"} = ($pageNumber * $pageSize < sizeof($array));
 
         return json_encode($result, JSON_UNESCAPED_SLASHES);
     }
@@ -248,7 +263,6 @@ final class IdpRepository
           array_filter(
             $this->idpObjects,
             function ($value) use ($query) {
-                // logDebug(sprintf("Data(%s) = %s", $value->id, $value->getDataForSearch()));
                 return (
                     fnmatch("*".removeAccents($query)."*", removeAccents($value->name), FNM_CASEFOLD)
                  || fnmatch("*".removeAccents($query)."*", removeAccents($value->text), FNM_CASEFOLD)
@@ -259,5 +273,18 @@ final class IdpRepository
           $pageNumber,
           $pageSize
           );
+    }
+
+    public function getLastUsedIdpJson()
+    {
+        return json_encode($this->getLastUsedIdp());
+    }
+
+    public function getLastUsedIdp()
+    {
+        if (sizeof($this->lastIdps) > 0) {
+            return $this->lastIdps[0];
+        }
+        return "";
     }
 }

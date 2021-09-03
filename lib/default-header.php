@@ -15,7 +15,7 @@
 	<?php
 
     if (isUseSelect2()) {
-        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.css" type="text/css" >'.PHP_EOL;
+        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.min.css" type="text/css" >'.PHP_EOL;
         // Version of select2 : 4.0.6-rc.0
         // Availability https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js
         // Languages available at https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/i18n/<2letterCode>.js
@@ -111,8 +111,23 @@
           escapeMarkup: function (text) { return text; }
         });
         // Auto-submit when an idp is selected
-        $('.userIdPSelection').on('select2:select', function (e) {
-          document.getElementById("IdPList").submit();
+        // $('.userIdPSelection').on('select2:select', function (e) {
+        //   document.getElementById("IdPList").submit();
+        // });
+        // Preselect last used IdP
+        // Fetch the preselected item, and add to the control
+        var idpSelect = $('.userIdPSelection');
+        $.ajax({
+            type: 'GET',
+            url: <?php echo "'".$apiURL."/idps?lastIdp'" ?>,
+        }).then(function (data) {
+            // create the option and append to Select2
+            // in order ot pass all info from data, we pass it in JSON String as
+            // text, ans select2Functions will build it back
+            if(data.id != null) {
+              var option = new Option(JSON.stringify(data), data.id, true, true);
+              idpSelect.append(option).trigger('change');
+            }
         });
 		<?php
     } elseif ($bodyType == "notice" && $permanentUserIdP != '') {

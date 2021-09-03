@@ -26,10 +26,7 @@ function printHeader($bodyType)
     global $federationURL, $organizationURL, $faqURL, $helpURL, $privacyURL;
     global $customStrings;
     global $developmentMode, $apiURL;
-    global $permanentUserIdP, $permanentUserIdPName, $permanentUserIdPLogo;
     global $IDProviders;
-
-    $permanentUserIdP = getPermanentUserIdp();
 
     include(get_template('header.php'));
 }
@@ -278,7 +275,6 @@ function getPermanentUserIdp()
 function printFooter()
 {
     global $customStrings;
-
     include(get_template('footer.php'));
 }
 
@@ -426,7 +422,7 @@ function printCSS($file)
 {
     global $imageURL;
 
-    if ($file != 'ImprovedDropDown.css' && $file != 'select2.css') {
+    if ($file != 'ImprovedDropDown.css' && $file != 'select2.css' && $file != 'select2.min.css') {
         $file= 'styles.css';
     }
 

@@ -144,15 +144,9 @@ var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome"
 // which might be loaded from a remote domain. While generally not especially
 // dangerous, there is always a risk when loading content (in this case
 // images) from third party hosts.
+// Please note that select2 activation superseeds improveDropDown activation
 // [Optional, default: false]
 // var wayf_use_improved_drop_down_list = false;
-
-// Whether or not use Select2 drop down
-// Attention: setting this to true, overrides $useImprovedDropDownList param
-// For this to fully work, one must also add useSelect2 query Param to the
-// embedded-wayf.js script loading URL.
-// Page size is contrrolled by WAYF server directly.
-// var wayf_use_select2 = false;
 
 // If true the improved drop-down-list will not display IdP logos that
 // have to be loaded from remote URLs. That way the web browser
@@ -336,7 +330,8 @@ var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome"
 
 //-->
 </script>
-<!-- To fully enable select2, one have to add useSelect2 query param: --> 
+
+<!-- To fully enable select2, one have to add useSelect2 query param: -->
 <!-- <script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js?useSelect2=true"></script> -->
 <script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js"></script>
 
