@@ -1219,18 +1219,17 @@
 
         // Use GET arguments or use configuration parameters
         if (entityIDGETParam != "" && returnGETParam != "") {
-          wayf_authReq_URL += '?entityID=' + encodeURIComponent(entityIDGETParam);
+          wayf_authReq_URL += '&entityID=' + encodeURIComponent(entityIDGETParam);
           wayf_authReq_URL += '&amp;return=' + encodeURIComponent(returnGETParam);
         } else {
           var return_url = wayf_sp_samlDSURL + getGETArgumentSeparator(wayf_sp_samlDSURL);
           return_url += 'SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
-          wayf_authReq_URL += '?entityID=' + encodeURIComponent(wayf_sp_entityID);
+          wayf_authReq_URL += '&entityID=' + encodeURIComponent(wayf_sp_entityID);
           wayf_authReq_URL += '&amp;return=' + encodeURIComponent(return_url);
         }
       } else {
         // Old Shibboleth WAYF protocol
-        wayf_authReq_URL = wayf_URL;
-        wayf_authReq_URL += '?providerId=' + encodeURIComponent(wayf_sp_entityID);
+        wayf_authReq_URL += '&providerId=' + encodeURIComponent(wayf_sp_entityID);
         wayf_authReq_URL += '&amp;target=' + encodeURIComponent(wayf_return_url);
         wayf_authReq_URL += '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL);
         wayf_authReq_URL += '&amp;time=<?php echo $utcTime ?>';
