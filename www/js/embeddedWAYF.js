@@ -1207,7 +1207,15 @@
       if (wayf_use_discovery_service === true) {
         // New SAML Discovery Service protocol
 
-        wayf_authReq_URL = wayf_URL;
+        // Manage additional parameters
+        <?php
+        $params = "?f=1";
+        foreach ($_GET as $p => $v) {
+          $params .= "&$p=$v";
+        }
+        ?>
+
+        wayf_authReq_URL = wayf_URL + "<?php echo $params ?>";
 
         // Use GET arguments or use configuration parameters
         if (entityIDGETParam != "" && returnGETParam != "") {
