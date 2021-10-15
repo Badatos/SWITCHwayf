@@ -11,8 +11,8 @@
 
 $topLevelDir = dirname(__DIR__);
 
-if (isset($_SERVER{'SWITCHWAYF_CONFIG'})) {
-    require_once($_SERVER{'SWITCHWAYF_CONFIG'});
+if (isset($_SERVER['SWITCHWAYF_CONFIG'])) {
+    require_once($_SERVER['SWITCHWAYF_CONFIG']);
 } else {
     require_once($topLevelDir . '/etc/config.php');
 }
