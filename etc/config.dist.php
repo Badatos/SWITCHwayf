@@ -199,6 +199,9 @@
   // Make sure the web server user has write access to this file!
   //$WAYFLogFile = '/var/log/apache2/wayf.log';
 
+// if set, errors intended for end users will trigger a redirection to a
+// dedicated service instead of being displayed locally
+//$errorRedirectURL = 'https://error.example.com';
 
 
 // 4. Files and path Settings

@@ -61,6 +61,7 @@ function initConfigOptions()
     global $useSelect2;
     global $select2PageSize;
     global $allowedCORSDomain;
+    global $errorRedirectURL;
 
 
     // Set independet default configuration options
@@ -110,6 +111,7 @@ function initConfigOptions()
     $defaults['kerberosRedirectURL'] = dirname($_SERVER['SCRIPT_NAME']).'kerberosRedirect.php';
     $defaults['developmentMode'] = false;
     $defaults['customStrings'] = array();
+    $defaults['errorRedirectURL'] = '';
 
     // Initialize independent defaults
     foreach ($defaults as $key => $value) {
@@ -1194,4 +1196,23 @@ function buildIdpData($IDProvider, $key)
     $data = getDomainNameFromURI($key);
     $data .= composeOptionData($IDProvider);
     return $data;
+}
+
+// Handle error: either display it locally, or redirect to an external service
+function handleError($type, $message)
+{
+
+    global $errorRedirectURL;
+
+    if ($errorRedirectURL) {
+        redirectTo(
+            $errorRedirectURL
+                .'?now='.urlencode(time())
+                .'&entityID='.$_GET['entityID']
+                .'&errorType='.$type
+                .'&errorText='.urlencode($message)
+        );
+    } else {
+        printError($message);
+    }
 }

@@ -35,7 +35,7 @@ if (isValidDSRequest()) {
         // Show error
         $message = sprintf(getLocalString('invalid_return_url'), htmlentities($_GET['return']));
         logWarning('Invalid return URL: '.$_GET['return']);
-        printError($message);
+        handleError('invalid_return_url', $message);
         exit;
     }
 
@@ -45,7 +45,7 @@ if (isValidDSRequest()) {
             // Show error
             $message = sprintf(getLocalString('unknown_sp'), htmlentities($_GET['entityID']));
             logWarning('Unknown SP: '.$_GET['entityID']);
-            printError($message);
+            handleError('unknown_sp', $message);
             exit;
         }
 
@@ -55,7 +55,7 @@ if (isValidDSRequest()) {
             // Show error
             $message = sprintf(getLocalString('unverified_return_url'), htmlentities($returnURL), htmlentities($_GET['entityID']));
             logWarning('Unverified return URL: '.$returnURL.' for SP: '.$_GET['entityID']);
-            printError($message);
+            handleError('unverified_return_url', $message);
             exit;
         }
     }
@@ -423,7 +423,7 @@ if (
     $message .= '<code>'.htmlentities($invalidstring).'</code></pre></p>';
     $message .= '<p>'. getLocalString('valid_request_description');
     logWarning('Invalid GET arguments for Shibboleth discovery requests: '.$invalidstring);
-    printError($message);
+    handleError('arguments_missing', $message);
     exit;
 } elseif (
         (!isset($_GET['entityID']) && isset($_GET['return']))
@@ -440,7 +440,7 @@ if (
     $message .= '<code>'.htmlentities($invalidstring).'</code></pre>';
     $message .= '<p>'. getLocalString('valid_saml2_request_description');
     logWarning('Invalid GET arguments for SAML discovery requests: '.$invalidstring);
-    printError($message);
+    handleError('arguments_missing', $message);
     exit;
 } elseif (isRequestType('styles.css')) {
     header('Content-Type: text/css');
