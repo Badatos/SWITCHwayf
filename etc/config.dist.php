@@ -200,8 +200,15 @@
   //$WAYFLogFile = '/var/log/apache2/wayf.log';
 
 // if set, errors intended for end users will trigger a redirection to a
-// dedicated service instead of being displayed locally
-//$errorRedirectURL = 'https://error.example.com';
+// dedicated service instead of being displayed locally, as possible with
+// Shibboleth SP:
+// https://shibboleth.atlassian.net/wiki/spaces/SP3/pages/2065334361/Errors#Errors-Redirection
+// the following variables are available, and will be substituded in the URL:
+// - $time: current date and time
+// - $type: the error message localization code
+// - $message: the localized error message
+// - $entityID: name of identity provider, if known
+//$errorRedirectURL = 'https://error.example.com?now=$time&errorType=$type&errorText=$message&entityID=$entityID';
 
 
 // 4. Files and path Settings

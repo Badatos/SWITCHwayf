@@ -1205,13 +1205,14 @@ function handleError($type, $message)
     global $errorRedirectURL;
 
     if ($errorRedirectURL) {
-        redirectTo(
-            $errorRedirectURL
-                .'?now='.urlencode(time())
-                .'&entityID='.$_GET['entityID']
-                .'&errorType='.$type
-                .'&errorText='.urlencode($message)
+        $variables = array(
+            '$time'     => time(),
+            '$entityID' => urlencode($_GET['entityID']),
+            '$type'     => $type,
+            '$message'  => urlencode($message),
         );
+
+        redirectTo(strtr($errorRedirectURL, $variables));
     } else {
         printError($message);
     }
