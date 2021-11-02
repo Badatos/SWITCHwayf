@@ -207,7 +207,9 @@
 // - $time: current date and time
 // - $type: the error message localization code
 // - $message: the localized error message
-// - $entityID: name of identity provider, if known
+// - $entityID: name of service provider, if known
+// - $contactName: name of first technical contact for service provider, if known
+// - $contactEmail: email of first technical contact for service provider, if known
 //$errorRedirectURL = 'https://error.example.com?now=$time&errorType=$type&errorText=$message&entityID=$entityID';
 
 

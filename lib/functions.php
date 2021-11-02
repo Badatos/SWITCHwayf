@@ -1203,14 +1203,29 @@ function handleError($type, $message)
 {
 
     global $errorRedirectURL;
+    global $SProviders;
 
     if ($errorRedirectURL) {
+        $entityID    = $_GET['entityID'];
+
         $variables = array(
-            '$time'     => time(),
-            '$entityID' => urlencode($_GET['entityID']),
-            '$type'     => $type,
-            '$message'  => urlencode($message),
+            '$time'         => time(),
+            '$entityID'     => urlencode($entityID),
+            '$type'         => $type,
+            '$message'      => urlencode($message),
         );
+
+        if (isset($entityID) &&
+            isset($SProviders[$entityID]) &&
+            isset($SProviders[$entityID]['Contacts'])
+        ) {
+            $contact = $SProviders[$entityID]['Contacts'][0];
+            $variables['$contactName']  = isset($contact['name'])  ? $contact['name']  : '';
+            $variables['$contactEmail'] = isset($contact['email']) ? $contact['email'] : '';
+        } else {
+            $variables['$contactName']  = '';
+            $variables['$contactEmail'] = '';
+        }
 
         redirectTo(strtr($errorRedirectURL, $variables));
     } else {
