@@ -1209,7 +1209,7 @@ function handleError($type, $message)
         $entityID    = $_GET['entityID'];
 
         $variables = array(
-            '$time'         => time(),
+            '$time'         => strftime('%c'),
             '$entityID'     => urlencode($entityID),
             '$type'         => $type,
             '$message'      => urlencode($message),
