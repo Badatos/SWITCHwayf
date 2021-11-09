@@ -1210,6 +1210,7 @@ function handleError($type, $message)
 
         $variables = array(
             '$time'         => strftime('%c'),
+            '$url'          => urlencode(sprintf("%s://%s%s", isset($_SERVER['HTTPS'])?"https":"http", $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF'])),
             '$entityID'     => urlencode($entityID),
             '$type'         => $type,
             '$message'      => urlencode($message),

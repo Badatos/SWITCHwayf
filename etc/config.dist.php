@@ -207,6 +207,7 @@
 // - $time: current date and time
 // - $type: the error message localization code
 // - $message: the localized error message
+// - $url: the URL associated with the request
 // - $entityID: name of service provider, if known
 // - $contactName: name of first technical contact for service provider, if known
 // - $contactEmail: email of first technical contact for service provider, if known
