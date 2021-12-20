@@ -61,6 +61,7 @@ function initConfigOptions()
     global $useSelect2;
     global $select2PageSize;
     global $allowedCORSDomain;
+    global $errorRedirectURL;
 
 
     // Set independet default configuration options
@@ -110,6 +111,7 @@ function initConfigOptions()
     $defaults['kerberosRedirectURL'] = dirname($_SERVER['SCRIPT_NAME']).'kerberosRedirect.php';
     $defaults['developmentMode'] = false;
     $defaults['customStrings'] = array();
+    $defaults['errorRedirectURL'] = '';
 
     // Initialize independent defaults
     foreach ($defaults as $key => $value) {
@@ -1197,4 +1199,40 @@ function buildIdpData($IDProvider, $key)
     $data = getDomainNameFromURI($key);
     $data .= composeOptionData($IDProvider);
     return $data;
+}
+
+// Handle error: either display it locally, or redirect to an external service
+function handleError($type, $message)
+{
+
+    global $errorRedirectURL;
+    global $SProviders;
+
+    if ($errorRedirectURL) {
+        $entityID    = $_GET['entityID'];
+
+        $variables = array(
+            '$time'         => strftime('%c'),
+            '$url'          => urlencode(sprintf("%s://%s%s", isset($_SERVER['HTTPS'])?"https":"http", $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF'])),
+            '$entityID'     => urlencode($entityID),
+            '$type'         => $type,
+            '$message'      => urlencode($message),
+        );
+
+        if (isset($entityID) &&
+            isset($SProviders[$entityID]) &&
+            isset($SProviders[$entityID]['Contacts'])
+        ) {
+            $contact = $SProviders[$entityID]['Contacts'][0];
+            $variables['$contactName']  = isset($contact['name'])  ? $contact['name']  : '';
+            $variables['$contactEmail'] = isset($contact['email']) ? $contact['email'] : '';
+        } else {
+            $variables['$contactName']  = '';
+            $variables['$contactEmail'] = '';
+        }
+
+        redirectTo(strtr($errorRedirectURL, $variables));
+    } else {
+        printError($message);
+    }
 }

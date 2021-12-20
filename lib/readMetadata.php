@@ -418,6 +418,10 @@ function processSPRoleDescriptor($SPRoleDescriptorNode){
 	foreach ($MDUIKeywords as $lang => $keywords){
 		$SP[$lang]['Keywords'] = $keywords;
 	}
+
+    // Get contacts
+	$contacts = getTechnicalContacts($SPRoleDescriptorNode);
+	$SP['Contacts'] = $contacts;
 	
 	return $SP;
 }
@@ -521,6 +525,34 @@ function getMDUIKeywords($RoleDescriptorNode){
 	}
 	
 	return $Entity;
+}
+
+// Get technical contacts from RoleDescriptor
+function getTechnicalContacts($RoleDescriptorNode){
+
+	$contacts = Array();
+
+	$contactNodes = $RoleDescriptorNode->parentNode->getElementsByTagNameNS('urn:oasis:names:tc:SAML:2.0:metadata', 'ContactPerson');
+	foreach( $contactNodes as $contactNode ){
+		if ($contactNode->getAttribute('contactType') != 'technical') {
+            continue;
+        }
+        $contact = Array();
+        $propertyNodes = $contactNode->childNodes;
+        foreach ($propertyNodes as $propertyNode) {
+            $name  = $propertyNode->localName;
+            $value = $propertyNode->nodeValue;
+            if ($name == 'GivenName') {
+                $contact['name'] = $value;
+            } elseif ($name == 'EmailAddress') {
+                $value = preg_replace('/^mailto:/', '', $value);
+                $contact['email'] = $value;
+            }
+        }
+		$contacts[] = $contact;
+	}
+
+	return $contacts;
 }
 
 // Get Shib Scopes from RoleDescriptor

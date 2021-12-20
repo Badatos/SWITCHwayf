@@ -63,7 +63,7 @@ final class IdpObject
             }
             if ($key == "Logo") {
                 if (sizeof($value) > 0) {
-                    $this->logo = getImage($value{"URL"});
+                    $this->logo = getImage($value["URL"]);
                 }
             }
             // Group
@@ -242,9 +242,9 @@ final class IdpRepository
             $thisPageFirstGroup = $this->idpObjects[$pageNumber * $pageSize]->type;
             $hideFirstGroup = ($lastPageLastGroup == $thisPageFirstGroup);
         }
-        $result{"results"} = $this->toGroups($idpPage, $hideFirstGroup);
+        $result["results"] = $this->toGroups($idpPage, $hideFirstGroup);
 
-        $result{"pagination"}{"more"} = ($pageNumber * $pageSize < sizeof($array));
+        $result["pagination"]["more"] = ($pageNumber * $pageSize < sizeof($array));
 
         return json_encode($result, JSON_UNESCAPED_SLASHES);
     }

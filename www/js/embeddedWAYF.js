@@ -744,7 +744,7 @@
 
       $('.userIdPSelection').select2({
         ajax: {
-          url: <?php echo "'".$apiURL."/idps'" ?>,
+          url: <?php echo "'".$apiURL."'" ?>,
           delay: 250,
           dataType: 'json',
           data: function(params) {
@@ -791,7 +791,7 @@
 
       $.ajax({
         type: 'GET',
-        url: <?php echo "'".$apiURL."/idps?lastIdp&idpCookie='+"."saml_idp_cookie" ?>,
+        url: <?php echo "'".$apiURL."?lastIdp&idpCookie='+"."saml_idp_cookie" ?>,
       }).then(function(data) {
         // create the option and append to Select2
         // in order ot pass all info from data, we pass it in JSON String as
@@ -1207,22 +1207,29 @@
       if (wayf_use_discovery_service === true) {
         // New SAML Discovery Service protocol
 
-        wayf_authReq_URL = wayf_URL;
+        // Manage additional parameters
+        <?php
+        $params = "?f=1";
+        foreach ($_GET as $p => $v) {
+          $params .= "&$p=$v";
+        }
+        ?>
+
+        wayf_authReq_URL = wayf_URL + "<?php echo $params ?>";
 
         // Use GET arguments or use configuration parameters
         if (entityIDGETParam != "" && returnGETParam != "") {
-          wayf_authReq_URL += '?entityID=' + encodeURIComponent(entityIDGETParam);
+          wayf_authReq_URL += '&entityID=' + encodeURIComponent(entityIDGETParam);
           wayf_authReq_URL += '&amp;return=' + encodeURIComponent(returnGETParam);
         } else {
           var return_url = wayf_sp_samlDSURL + getGETArgumentSeparator(wayf_sp_samlDSURL);
           return_url += 'SAMLDS=1&target=' + encodeURIComponent(wayf_return_url);
-          wayf_authReq_URL += '?entityID=' + encodeURIComponent(wayf_sp_entityID);
+          wayf_authReq_URL += '&entityID=' + encodeURIComponent(wayf_sp_entityID);
           wayf_authReq_URL += '&amp;return=' + encodeURIComponent(return_url);
         }
       } else {
         // Old Shibboleth WAYF protocol
-        wayf_authReq_URL = wayf_URL;
-        wayf_authReq_URL += '?providerId=' + encodeURIComponent(wayf_sp_entityID);
+        wayf_authReq_URL += '&providerId=' + encodeURIComponent(wayf_sp_entityID);
         wayf_authReq_URL += '&amp;target=' + encodeURIComponent(wayf_return_url);
         wayf_authReq_URL += '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL);
         wayf_authReq_URL += '&amp;time=<?php echo $utcTime ?>';

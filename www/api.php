@@ -6,10 +6,8 @@
 /*------------------------------------------------*/
 
 $topLevelDir = dirname(__DIR__);
-
 require_once($topLevelDir . '/lib/functions.php');
-
-require('common.php');
+require_once($topLevelDir . '/lib/common.php');
 
 header('Content-Type: application/json');
 
