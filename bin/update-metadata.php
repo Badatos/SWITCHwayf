@@ -16,11 +16,11 @@ Description: This script is used to dynamically create the list of
 Usage
 -----
 php update-metadata.php -help|-h
-php update-metadata.php --metadata-file <file> \
+php update-metadata.php --metadata-file <file> [--metadata-file <file>] \
     --metadata-idp-file <file> --metadata-sp-file <file> \
     [--verbose | -v] [--min-sp-count <count>] [--min-idp-count <count>] \
     [--language <locale>] [--syslog] [--syslog-id <id>]
-php update-metadata.php --metadata-url <url> \
+php update-metadata.php --metadata-url <url> [--metadata-url <url>] \
     --metadata-idp-file <file> --metadata-sp-file <file> \
     [--verbose | -v] [--min-sp-count <count>] [--min-idp-count <count>] \
     [--language <locale>] [--syslog] [--syslog-id <id>]
@@ -152,44 +152,42 @@ if(isset($options['filter-idps-by-ec'])){
 	$filterEntityCategory = false;
 }
 
+$metadataSources = array();
+
 // Input validation
 if (isset($metadataURL) && $metadataURL) {
-	$metadataFile = tempnam(sys_get_temp_dir(), 'metadata');
 	if (!ini_get('allow_url_fopen')) {
 		reportError("Exiting: allow_url_fopen disabled, unabled to download $metadataURL\n");
 		exit(1);
 	}
-	if ($verbose) {
-		reportInfo("Downloading metadata file from $metadataURL\n");
-	}
-	$result = @copy($metadataURL, $metadataFile);
-	if (!$result) {
-		$error = error_get_last();
-		$message = explode(': ', $error['message'])[2];
-		reportError("Exiting: could not download $metadataURL: $message");
-		exit(1);
-	}
+    if (!is_array($metadataURL)) {
+        downloadMetadataFile($metadataURL);
+    } else {
+        foreach ($metadataURL as $url) {
+            downloadMetadataFile($url);
+        }
+    }
 } else {
-	if (
-		!file_exists($metadataFile)
-		|| filesize($metadataFile) == 0
-		) {
-		reportError("Exiting: file $metadataFile is empty or does not exist\n");
-		exit(1);
-	}
-
-	if (!is_readable($metadataFile)){
-		reportError("Exiting: file $metadataFile is not readable\n");
-		exit(1);
-	}
+    if (!is_array($metadataFile)) {
+        checkMetadataFile($metadataFile);
+    } else {
+        foreach ($metadataFile as $file) {
+            checkMetadataFile($file);
+        }
+    }
 }
 
-if ($verbose) {
-	reportInfo("Parsing metadata file $metadataFile\n");
-}
+$metadataIDProviders = array();
+$metadataSProviders = array();
 
-// Parse metadata
-list($metadataIDProviders, $metadataSProviders) = parseMetadata($metadataFile, $language);
+foreach ($metadataSources as $source) {
+    if ($verbose) {
+        reportInfo("Parsing metadata file $source\n");
+    }
+    list($IDProviders, $SProviders) = parseMetadata($source, $language);
+    $metadataIDProviders = array_merge($metadataIDProviders, $IDProviders);
+    $metadataSProviders = array_merge($metadataSProviders, $SProviders);
+}
 
 // If $metadataIDProviders is not FALSE, dump results in $metadataIDPFile.
 if (is_array($metadataIDProviders)){
@@ -231,13 +229,15 @@ if (is_array($metadataSProviders)){
 
 // clean up if needed
 if (isset($metadataURL) && $metadataURL) {
-	$result = @unlink($metadataFile);
-	if (!$result) {
-		$error = error_get_last();
-		$message = $error['message'];
-		reportError("Exiting: could not delete temporary file $metadataFile: $message");
-		exit(1);
-	}
+    foreach ($metadataSources as $source) {
+        $result = @unlink($source);
+        if (!$result) {
+            $error = error_get_last();
+            $message = $error['message'];
+            reportError("Exiting: could not delete temporary file $source: $message");
+            exit(1);
+        }
+    }
 }
 
 if ($syslog) {
@@ -262,4 +262,40 @@ function reportInfo($message) {
 	} else {
 		fwrite(STDOUT, $message);
 	}
+}
+
+function downloadMetadataFile($url) {
+    global $metadataSources, $verbose;
+
+    $file = tempnam(sys_get_temp_dir(), 'metadata');
+    if ($verbose) {
+        reportInfo("Downloading metadata file from $url\n");
+    }
+    $result = @copy($url, $file);
+    if (!$result) {
+        $error = error_get_last();
+        $message = explode(': ', $error['message'])[2];
+        reportError("Exiting: could not download $url: $message");
+        exit(1);
+    }
+    array_push($metadataSources, $file);
+}
+
+function checkMetadataFile($file) {
+    global $metadataSources;
+
+    if (
+        !file_exists($file)
+        || filesize($file) == 0
+        ) {
+        reportError("Exiting: file $file is empty or does not exist\n");
+        exit(1);
+    }
+
+    if (!is_readable($file)){
+        reportError("Exiting: file $file is not readable\n");
+        exit(1);
+    }
+
+    array_push($metadataSources, $file);
 }
