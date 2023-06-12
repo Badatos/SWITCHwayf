@@ -29,16 +29,16 @@ final class SortTest extends TestCase
 
     public function testSortAccents()
     {
-        $first{"Name"} = "Bar";
-        $last{"Name"} = "Foo";
+        $first["Name"] = "Bar";
+        $last["Name"] = "Foo";
 
         $this->assertLessThan(
           0,
           sortUsingTypeIndexAndName($first, $last)
       );
 
-        $first{"Name"} = "École";
-        $last{"Name"} = "Foo";
+        $first["Name"] = "École";
+        $last["Name"] = "Foo";
 
         $this->assertLessThan(
           0,

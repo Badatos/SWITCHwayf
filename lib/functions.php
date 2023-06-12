@@ -1212,7 +1212,7 @@ function handleError($type, $message)
         $entityID    = $_GET['entityID'];
 
         $variables = array(
-            '$time'         => strftime('%c'),
+            '$time'         => date('%c'),
             '$url'          => urlencode(sprintf("%s://%s%s", isset($_SERVER['HTTPS'])?"https":"http", $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF'])),
             '$entityID'     => urlencode($entityID),
             '$type'         => $type,
