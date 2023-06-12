@@ -1,4 +1,4 @@
-Copyright (c) 2020, SWITCH
+Copyright (c) 2023, SWITCH
 See LICENSE file for details.
 
 -------------------------------------------------------------------------------
@@ -9,19 +9,19 @@ SWITCHwayf
 This document contains important information for this release of SWITCHwayf,
 including the installation and update instructions.
 
-* Project web site: <https://gitlab.switch.ch/aai/SWITCHwayf/>
-* Bug reports/feature requests: <https://gitlab.switch.ch/aai/SWITCHwayf//issues>
-* Contact: aai@switch.ch or go to <https://www.switch.ch/aai/wayf/>
+* Project web site: https://gitlab.switch.ch/aai/SWITCHwayf/
+* Bug reports/feature requests: https://gitlab.switch.ch/aai/SWITCHwayf/issues
+* Contact: aai@switch.ch or go to https://www.switch.ch/aai/wayf/
 
 
 -------------------------------------------------------------------------------
 
 Requirements
 ------------
-- PHP 7
+- PHP 7 or PHP 8
 - PHP XML Parser extension is required for parsing SAML2 metadata
   (Debian/Ubuntu: 'apt install php-xml', CentOS/RedHat: yum install php-xml)
-- The web server users must have write permissions to some files including:
+- The web server users must have write permissions to these files:
   * $backupIDPConfigFile (default 'IDProvider.conf.php')
   * $metadataIDPFile (default 'IDProvider.metadata.conf.php')
   * $metadataSPFile (default 'SProvider.metadata.conf.php')
@@ -33,13 +33,14 @@ Requirements
 Download
 --------
 The latest release can be downloaded from:
-<https://gitlab.switch.ch/aai/SWITCHwayf/>
+https://gitlab.switch.ch/aai/SWITCHwayf/
 
 -------------------------------------------------------------------------------
 
 Installation
 ------------
-1. Unpack the SWITCHwayf_binary ${VERSION}_${DATE}.zip ZIP archive into a
+1. Checkout the code from https://gitlab.switch.ch/aai/SWITCHwayf.git
+   or unpack the SWITCHwayf_binary ${VERSION}_${DATE}.zip ZIP archive into a
    directory that is *not* accessible via the web server.
 
 2. Make a copy of the *.dist.php files:
@@ -56,8 +57,8 @@ Installation
    suitable choices for your use case.
    If you are relying on metadata for SP/IdP information,
    initialize the
-   IDProvider.metadata.php//SProvider.metadata.php files with a
-   command like
+   IDProvider.metadata.php/SProvider.metadata.php files with a
+   command like:
 
         php bin/update-metadata.php --metadata-file #PATH-TO-SAML2-METADATA#/metadata.xml --metadata-idp-file etc/IDProvider.metadata.php --metadata-sp-file etc/SProvider.metadata.php --verbose
 
@@ -83,7 +84,8 @@ Installation
             Allow from all
 
           <Files WAYF>
-              SetHandler php7-script
+              SetHandler php-script
+              # SetHandler php7-script
               AcceptPathInfo On
           </Files>
         </Directory>
@@ -102,17 +104,16 @@ Installation
         Header set P3P "CP=\"NOI CUR DEVa OUR IND COM NAV PRE\""
 
    For that to work, the Apache header extension must also be enabled
-   with a command like:
-
+   with a command like (for Debian):
 
         a2enmod headers
         /etc/init.d/apache2 reload
 
-   See <http://www.w3.org/P3P/> for more details on P3P.
+   See http://www.w3.org/P3P/ for more details on P3P.
 
 7. Test access by calling the WAYF with a URL like:
 
-   <https://your.host.com/#SOME_PATH#/WAYF>
+   https://your.host.com/#SOME_PATH#/WAYF
 
    Use this URL as Location for your Shibboleth configuration. The WAYF
    will automatically be able to detect whether it receives a Shibboleth
@@ -146,7 +147,7 @@ General Update Instructions
 
 2. Get the ZIP archive of the new version and move it into the same
    directory as the WAYF script of the currently deployed version.
-   Download from <https://gitlab.switch.ch/aai/SWITCHwayf/-/archive/master/SWITCHwayf-master.zip>
+   Download from https://gitlab.switch.ch/aai/SWITCHwayf/-/archive/master/SWITCHwayf-master.zip
 
 3. Unzip the archive, e.g. with the command:
 
@@ -266,7 +267,7 @@ Specific Update Instructions
 Security Notes
 --------------
 The Discovery Service protocol as defined in
-<http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf>
+http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-idp-discovery.pdf
 states that the protocol creates opportunities for phishing attacks as do all
 SSO protocols that make use of redirection. The specification states that an
 implementation "SHOULD" examine the 'return' parameter used in a Discovery
