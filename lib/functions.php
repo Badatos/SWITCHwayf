@@ -338,13 +338,28 @@ function getTopLevelDomain($string)
 }
 
 /******************************************************************************/
+// Returns client IP adress, from X-Forward-For header if set, from source
+// address otherwise
+function getClientIPAdress()
+{
+    if (array_key_exists("HTTP_X_FORWARDED_FOR", $_SERVER)) {
+        $ips = explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]);
+        return $ips[0];
+    } else {
+        return $_SERVER["REMOTE_ADDR"];
+    }
+}
+
+/******************************************************************************/
 // Parses the reverse dns lookup hostname out of a string and returns domain
 function getDomainNameFromURIHint()
 {
     global $IDProviders;
 
-    $clientHostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-    if ($clientHostname == $_SERVER['REMOTE_ADDR']) {
+    $clientIP = getClientIPAdress();
+
+    $clientHostname = gethostbyaddr($clientIP);
+    if ($clientHostname == $clientIP) {
         return '-';
     }
 
@@ -565,7 +580,7 @@ function getIPAdressHint()
 
     foreach ($IDProviders as $name => $idp) {
         if (is_array($idp) && array_key_exists("IP", $idp)) {
-            $clientIP = $_SERVER["REMOTE_ADDR"];
+            $clientIP = getClientIPAdress();
 
             foreach ($idp["IP"] as $network) {
                 if (isIPinCIDRBlock($network, $clientIP)) {
