@@ -579,10 +579,10 @@ function getIPAdressHint()
     global $IDProviders;
 
     foreach ($IDProviders as $name => $idp) {
-        if (is_array($idp) && array_key_exists("IP", $idp)) {
+        if (is_array($idp) && array_key_exists("IPHint", $idp)) {
             $clientIP = getClientIPAdress();
 
-            foreach ($idp["IP"] as $network) {
+            foreach ($idp["IPHint"] as $network) {
                 if (isIPinCIDRBlock($network, $clientIP)) {
                     return $name;
                 }
