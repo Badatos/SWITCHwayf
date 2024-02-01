@@ -370,11 +370,13 @@ function getDomainNameFromURIHint()
     }
 
     // Return first matching IdP entityID that contains the client domain name
-    foreach ($IDProviders as $key => $value) {
-        if (
-               preg_match('/^http.+'.$clientDomainName.'/', $key)
-            || preg_match('/^urn:.+'.$clientDomainName.'$/', $key)) {
-            return $key;
+    foreach ($IDProviders as $name => $idp) {
+        if (is_array($idp) && array_key_exists("DomainHint", $idp)) {
+            foreach ($idp["DomainHint"] as $domain) {
+                if ($clientDomainName == $domain) {
+                    return $name;
+                }
+            }
         }
     }
 
