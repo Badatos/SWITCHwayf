@@ -515,7 +515,7 @@ function getIdPPathInfoHint()
             && !empty($value['SSO'])
             && $value['Type'] != 'wayf') {
             $hostName = getHostNameFromURI($key);
-            if ($hostName && isPartOfPathInfo($hostname)) {
+            if ($hostName && preg_match('|/'.$hostName.'|', $_SERVER['PATH_INFO'])) {
                 return $key;
             }
         }
@@ -528,7 +528,7 @@ function getIdPPathInfoHint()
             && !empty($value['SSO'])
             && $value['Type'] != 'wayf') {
             $domainName = getDomainNameFromURI($key);
-            if ($domainName && isPartOfPathInfo($domainName)) {
+            if ($domainName && preg_match('|/'.$domainName.'|', $_SERVER['PATH_INFO'])) {
                 return $key;
             }
         }
