@@ -628,7 +628,7 @@ function convertIPtoBinaryForm($ip)
 
     //  Handle IPv4 IP
     if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
-        return base_convert(ip2long($ip), 10, 2);
+        return sprintf("%032s", base_convert(ip2long($ip), 10, 2));
     }
 
     // Return false if IP is neither IPv4 nor a IPv6 IP
