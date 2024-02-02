@@ -511,26 +511,26 @@ function getIdPPathInfoHint()
     // Check for entityID hostnames of all available IdPs
     foreach ($IDProviders as $key => $value) {
         // Only check actual IdPs
-        if (
-                isset($value['SSO'])
-                && !empty($value['SSO'])
-                && $value['Type'] != 'wayf'
-                && isPartOfPathInfo(getHostNameFromURI($key))
-                ) {
-            return $key;
+        if (isset($value['SSO'])
+            && !empty($value['SSO'])
+            && $value['Type'] != 'wayf') {
+            $hostName = getHostNameFromURI($key);
+            if ($hostName && isPartOfPathInfo($hostname)) {
+                return $key;
+            }
         }
     }
 
     // Check for entityID domain names of all available IdPs
     foreach ($IDProviders as $key => $value) {
         // Only check actual IdPs
-        if (
-                isset($value['SSO'])
-                && !empty($value['SSO'])
-                && $value['Type'] != 'wayf'
-                && isPartOfPathInfo(getDomainNameFromURI($key))
-                ) {
-            return $key;
+        if (isset($value['SSO'])
+            && !empty($value['SSO'])
+            && $value['Type'] != 'wayf') {
+            $domainName = getDomainNameFromURI($key);
+            if ($domainName && isPartOfPathInfo($domainName)) {
+                return $key;
+            }
         }
     }
 
