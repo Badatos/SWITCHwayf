@@ -342,19 +342,23 @@ if (count($IDPArray) > 0) {
 
 if ($hintedCookieIdP != '-') {
     $selectedIDP = $hintedCookieIdP;
+    logDebug("IdP pre-selection: $selectedIDP (cookie)");
 } elseif ($hintedPathIDP != '-') {
     $selectedIDP = $hintedPathIDP;
+    logDebug("IdP pre-selection: $selectedIDP (path)");
 } else {
     $clientIP = getClientIPAdress();
 
     $hintedIPIDP = getIPAdressHint($clientIP);
     if ($hintedIPIDP != '-') {
         $selectedIDP = $hintedIPIDP;
+        logDebug("IdP pre-selection: $selectedIDP (ip)");
     } else {
         if ($useReverseDNSLookup) {
             $hintedDomainIDP = getDomainNameFromURIHint($clientIP);
             if ($hintedDomainIDP != '-') {
                 $selectedIDP = $hintedDomainIDP;
+                logDebug("IdP pre-selection: $selectedIDP (domain)");
             }
         }
     }
