@@ -18,7 +18,10 @@ function updateMetadata() {
 		$IDProviders = array();
 	}
 	
-	if (!file_exists($metadataIDPFile) or filemtime($metadataFile) > filemtime($metadataIDPFile)) {
+    if (
+        !file_exists($metadataIDPFile) or
+        (file_exists($metadataFile) && filemtime($metadataFile) > filemtime($metadataIDPFile))
+    ) {
 
 		// Get an exclusive lock to regenerate the IdP and SP files
 		// from the metadata file.
