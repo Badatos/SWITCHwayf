@@ -355,7 +355,7 @@ if ($hintedCookieIdP != '-') {
         logDebug("IdP pre-selection: $selectedIDP (ip)");
     } else {
         if ($useReverseDNSLookup) {
-            $hintedDomainIDP = getDomainNameFromURIHint($clientIP);
+            $hintedDomainIDP = getDomainNameHint($clientIP);
             if ($hintedDomainIDP != '-') {
                 $selectedIDP = $hintedDomainIDP;
                 logDebug("IdP pre-selection: $selectedIDP (domain)");

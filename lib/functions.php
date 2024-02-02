@@ -351,8 +351,8 @@ function getClientIPAdress()
 }
 
 /******************************************************************************/
-// Parses the reverse dns lookup hostname out of a string and returns domain
-function getDomainNameFromURIHint($clientIP)
+// Determines the IdP according to the client domain name
+function getDomainNameHint($clientIP)
 {
     global $IDProviders;
 
@@ -573,7 +573,7 @@ function getKerberosRealm($string)
 
 
 /******************************************************************************/
-// Determines the IdP according to the IP address if possible
+// Determines the IdP according to the client IP adress
 function getIPAdressHint($clientIP)
 {
     global $IDProviders;
