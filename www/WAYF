@@ -329,16 +329,6 @@ if (count($IDPArray) > 0) {
     }
 }
 
-// IP address range hint
-$hintedIPIDP = '-';
-$hintedIPIDP = getIPAdressHint();
-
-// Reverse DNS lookup hint
-$hintedDomainIDP = '-';
-if ($useReverseDNSLookup) {
-    $hintedDomainIDP = getDomainNameFromURIHint();
-}
-
 /*------------------------------------------------*/
 // Determine preselected IdP using gathered data
 /*------------------------------------------------*/
@@ -354,12 +344,20 @@ if ($hintedCookieIdP != '-') {
     $selectedIDP = $hintedCookieIdP;
 } elseif ($hintedPathIDP != '-') {
     $selectedIDP = $hintedPathIDP;
-} elseif ($hintedIPIDP != '-') {
-    $selectedIDP = $hintedIPIDP;
-} elseif ($hintedDomainIDP != '-') {
-    $selectedIDP = $hintedDomainIDP;
 } else {
-    $selectedIDP = '-';
+    $clientIP = getClientIPAdress();
+
+    $hintedIPIDP = getIPAdressHint($clientIP);
+    if ($hintedIPIDP != '-') {
+        $selectedIDP = $hintedIPIDP;
+    } else {
+        if ($useReverseDNSLookup) {
+            $hintedDomainIDP = getDomainNameFromURIHint($clientIP);
+            if ($hintedDomainIDP != '-') {
+                $selectedIDP = $hintedDomainIDP;
+            }
+        }
+    }
 }
 
 /*------------------------------------------------*/
