@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2019, SWITCH ?>
+<?php // Copyright (c) 2024, Switch ?>
 
 <!-- Error Message: Start-->
 <h1><?php echo getLocalString('invalid_query') ?></h1>

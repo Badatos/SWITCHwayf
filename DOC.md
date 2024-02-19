@@ -1,4 +1,4 @@
-Copyright (c) 2019, SWITCH
+Copyright (c) 2024, Switch
 See LICENSE file for details.
 
 -------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-Copyright (c) 2023, SWITCH
+Copyright (c) 2024, Switch
 See LICENSE file for details.
 
 -------------------------------------------------------------------------------
@@ -80,12 +80,10 @@ Installation
         <Directory /#YOUR-PATH-TO#/SWITCHwayf/www>
             Options Indexes MultiViews
             AllowOverride None
-            Order allow,deny
-            Allow from all
+            Require all granted
 
           <Files WAYF>
-              SetHandler php-script
-              # SetHandler php7-script
+              SetHandler application/x-httpd-php
               AcceptPathInfo On
           </Files>
         </Directory>

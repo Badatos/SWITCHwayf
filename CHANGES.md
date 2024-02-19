@@ -1,4 +1,4 @@
-Copyright (c) 2019, SWITCH
+Copyright (c) 2024, Switch
 See LICENSE file for details.
 
 -------------------------------------------------------------------------------
@@ -6,10 +6,10 @@ See LICENSE file for details.
 SWITCHwayf Changes
 ==================
 
-SWITCHwayf version: v2.X
+SWITCHwayf version: v2.1
 Bundled with:
 
-* JQuery v3.3.1
+* JQuery v3.7.1
 * ImprovedDropDown v1.0.2 (with modifications)
 * Select2 v4.0.6-rc.0 and i18n files for languages supported by SWITCHwayf
 
@@ -39,11 +39,16 @@ Version Number Policy
 
 SWITCHwayf Version History
 --------------------------
-* Version 2.x - Not released
-  - Added support for a new type of dropdown: select2 (https://select2.org/),
+* Version 2.1 - Release data: 19. February 2024
+  - Output hostname and remote address in HTML as comments for debugging multi-node setups
+  - HTML and graphics beautifications
+  - Updated installation instructions
+  - Fixed bug where keywords separated with + were not processed correctly 
+  - Updated Jquery to v3.7.1
+  - Add support for a new type of (experimental) dropdown: select2 (https://select2.org/),
     which loads IDP from a new JSON API. All loading of IDP occurs through ajax
     calls, including searches. Works with both standard and embedded WAYF.
-    Code provided by Geoffroy Arnoud and Guillaume Rousse@
+    This and related code were provided by Geoffroy Arnoud and Guillaume Rousse from RENATER.
 
 * Version 2.0 - Release date: 7. March 2019
   This version comes with a new directory structure that

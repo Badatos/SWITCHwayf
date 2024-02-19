@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2019, SWITCH
+<?php // Copyright (c) 2024, Switch
 $MAN=<<<PAGE
 Name:        SWITCHwayf
 Author:      Lukas Haemmerle, SWITCH

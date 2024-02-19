@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2019, SWITCH?>
+<?php // Copyright (c) 2024, Switch?>
 
 <!-- Identity Provider Selection: Start -->
 <h1><?php echo getLocalString('settings'); ?></h1>

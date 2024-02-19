@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2019, SWITCH?>
+<?php // Copyright (c) 2024, Switch?>
 
 <!-- EMBEDDED-WAYF-START -->
 <script type="text/javascript"><!--

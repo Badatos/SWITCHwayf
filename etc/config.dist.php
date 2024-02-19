@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2019, SWITCH
+<?php // Copyright (c) 2024, Switch
 
 //******************************************************************************
 // This file contains the configuration of SWITCHwayf, a light-weight
@@ -66,7 +66,7 @@
 // Enabling this will use JavaScript to convert the select element containing
 // all Identity Providers to a searchable search-as-you-type list that also
 // displays logos if available
-// Please note that select2 activation superseeds improveDropDown activation
+// Please note that select2 activation overrides the improveDropDown activation
 //$useImprovedDropDownList = true;
 
   // If true the improved drop-down-list will not display logos that
@@ -76,9 +76,9 @@
   // (src="data:image/png;base64...") will however still be displayed
   //$disableRemoteLogos = false;
 
-// Whether or not use Select2 drop down
+// Whether or not use Select2 drop down (experimental)
 // Attention: setting this to true, overrides $useImprovedDropDownList param
-//$useSelect2 = true;
+//$useSelect2 = false;
 
 // Config to change the number of IdP fetched when using Select2 dropdown
 //$select2PageSize = 100;

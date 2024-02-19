@@ -1,4 +1,4 @@
-<?php // Copyright (c) 2019, SWITCH
+<?php // Copyright (c) 2024, Switch
 
 // Localized language strings for SWITCHwayf
 // Make sure to use HTML entities instead of plain UTF-8 characters for 
