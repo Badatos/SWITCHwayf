@@ -189,15 +189,21 @@
 // Therefore, only enable this feature if you know what you are doing!
 //$exportPreselectedIdP = false;
 
-// Whether to enable logging of WAYF/DS requests
-// If turned on make sure to also configure $WAYFLogFile
-//$useLogging = true;
+// How to log messages
+// syslog: log messages to syslog, with $logFacility facility (default)
+// file: log messages to a file, with $logFile
+// error: use web server error log
+//$logDestination = 'syslog';
 
-  // Where to log the access requests
-  // This log is only an audit log for access requests.
-  // Errors (e.g. when parsing SAML metadata) go to the syslog.
-  // Make sure the web server user has write access to this file!
-  //$WAYFLogFile = '/var/log/apache2/wayf.log';
+// Log file path, if $logDestination is set to 'file'
+// Make sure the web server user has write access to this file!
+//$logFile = '/var/log/apache2/wayf.log';
+
+// Syslog facility, if $logDestination is set to 'syslog'
+//$logFacility = LOG_USER;
+
+// Whether to enable logging of WAYF/DS requests
+//$logRequests = true;
 
 // if set, errors intended for end users will trigger a redirection to a
 // dedicated service instead of being displayed locally, as possible with

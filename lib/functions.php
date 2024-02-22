@@ -31,7 +31,6 @@ function initConfigOptions()
     global $useEmbeddedWAYF;
     global $useEmbeddedWAYFPrivacyProtection;
     global $useEmbeddedWAYFRefererForPrivacyProtection;
-    global $useLogging;
     global $exportPreselectedIdP;
     global $federationName;
     global $supportContactEmail;
@@ -53,7 +52,10 @@ function initConfigOptions()
     global $metadataIDPFile;
     global $metadataSPFile;
     global $metadataLockFile;
-    global $WAYFLogFile;
+    global $logDestination;
+    global $logFile;
+    global $logFacility;
+    global $logRequests;
     global $kerberosRedirectURL;
     global $instanceIdentifier;
     global $developmentMode;
@@ -88,7 +90,6 @@ function initConfigOptions()
     $defaults['useEmbeddedWAYF'] = false;
     $defaults['useEmbeddedWAYFPrivacyProtection'] = false;
     $defaults['useEmbeddedWAYFRefererForPrivacyProtection'] = false;
-    $defaults['useLogging'] = true;
     $defaults['exportPreselectedIdP'] = false;
     $defaults['federationName'] = 'Identity Federation';
     $defaults['organizationURL'] = 'http://www.'.$defaults['commonDomain'];
@@ -107,7 +108,10 @@ function initConfigOptions()
     $defaults['metadataSPFile'] = 'SProvider.metadata.php';
     $lockFileName = preg_replace('/[^-_\.a-zA-Z]/', '', $defaults['instanceIdentifier']);
     $defaults['metadataLockFile'] = (substr($_SERVER['PATH'], 0, 1) == '/') ? '/tmp/wayf_metadata-'.$lockFileName.'.lock' : 'C:\windows\TEMP\wayf_metadata-'.$lockFileName.'.lock';
-    $defaults['WAYFLogFile'] = '/var/log/apache2/wayf.log';
+    $defaults['logDestination'] = 'syslog';
+    $defaults['logFile'] = '/var/log/apache2/wayf.log';
+    $defaults['logPriority'] = LOG_USER;
+    $defaults['logRequests'] = true;
     $defaults['kerberosRedirectURL'] = dirname($_SERVER['SCRIPT_NAME']).'kerberosRedirect.php';
     $defaults['developmentMode'] = false;
     $defaults['customStrings'] = array();
@@ -778,54 +782,52 @@ function redirectToSP($url, $IdP)
 // by the SWITCHwayf
 function logAccessEntry($protocol, $type, $sp, $idp, $return)
 {
-    global $WAYFLogFile, $useLogging;
+    global $logRequests;
 
     // Return if logging deactivated
-    if (!$useLogging) {
+    if (!$logRequests) {
         return;
     }
 
-    // Create log file if it does not exist yet
-    if (!file_exists($WAYFLogFile) && !touch($WAYFLogFile)) {
-        // File does not exist and cannot be written to
-        logFatalErrorAndExit('WAYF log file '.$WAYFLogFile.' does not exist and could not be created.');
-    }
-
-    // Ensure that the file exists and is writable
-    if (!is_writable($WAYFLogFile)) {
-        logFatalErrorAndExit('Current file permission do not allow WAYF to write to its log file '.$WAYFLogFile.'.');
-    }
-
     // Compose log entry
-    $entry = date('Y-m-d H:i:s').' '.$_SERVER['REMOTE_ADDR'].' '.$protocol.' '.$type.' '.$idp.' '.$return.' '.$sp."\n";
+    $entry = $_SERVER['REMOTE_ADDR'].' '.$protocol.' '.$type.' '.$idp.' '.$return.' '.$sp;
 
-    // Open file in append mode
-    if (!$handle = fopen($WAYFLogFile, 'a')) {
-        logFatalErrorAndExit('Could not open file '.$WAYFLogFile.' for appending log entries.');
-    }
-
-    // Try getting the lock
-    while (!flock($handle, LOCK_EX)) {
-        usleep(rand(10, 100));
-    }
-
-    // Write entry
-    fwrite($handle, $entry);
-
-    // Release the lock
-    flock($handle, LOCK_UN);
-
-    // Close file handle
-    fclose($handle);
+    logInfo($entry);
 }
 
 /******************************************************************************/
 // Init connection to system logger
 function initLogger()
 {
-    global $instanceIdentifier;
+    global $logDestination, $logFile, $logHandle, $instanceIdentifier, $logFacility;
 
-    openlog($instanceIdentifier, LOG_NDELAY, LOG_USER);
+    switch($logDestination) {
+        case 'file':
+            // Create log file if it does not exist yet
+            if (!file_exists($logFile) && !touch($logFile)) {
+                // File does not exist and cannot be written to
+                error_log("[ERROR] WAYF log file $logFile does not exist and could not be created.");
+                exit;
+            }
+
+            // Ensure that the file exists and is writable
+            if (!is_writable($logFile)) {
+                error_log("[ERROR] Current file permission do not allow WAYF to write to its log file $logFile.");
+                exit;
+            }
+
+            // Open file in append mode
+            if (!$logHandle = fopen($logFile, 'a')) {
+                error_log("[ERROR] Could not open file $logFile for appending log entries.");
+                exit;
+            }
+            break;
+
+        case 'syslog':
+            openlog($instanceIdentifier, LOG_NDELAY, $logFacility);
+            break;
+    }
+
 }
 
 /******************************************************************************/
@@ -865,30 +867,43 @@ function logFatalErrorAndExit($errorMsg)
 
 /******************************************************************************/
 // Logs a message to errorLog
-function wayfLog($level, $errorMsg)
+function wayfLog($level, $message)
 {
-    global $developmentMode;
+    global $logDestination, $logHandle;
 
-    // If developmentMode => Log to errorLog
-    if ($developmentMode) {
-        error_log(sprintf("[%s] %s", $level, $errorMsg));
-        // Legacy logging
-        //echo $errorMsg;
-    }
+    switch($logDestination) {
+        case 'error':
+            error_log(sprintf("[%s] %s", $level, $message));
+            break;
 
-    $syslogPriority = LOG_INFO;
-    if ($level == "ERROR") {
-        $syslogPriority = LOG_ERR;
-    }
-    if ($level == "WARN") {
-        $syslogPriority = LOG_WARNING;
-    }
+        case 'file':
+            // Try getting the lock
+            while (!flock($logHandle, LOCK_EX)) {
+                usleep(rand(10, 100));
+            }
 
-    if ($level != "DEBUG") {
-        // Syslog Logging
-        initLogger();
+            // Write entry
+            fwrite($logHandle, sprintf("[%s] [%s] %s\n", date('Y-m-d H:i:s'), $level, $message));
 
-        syslog($syslogPriority, $errorMsg);
+            // Release the lock
+            flock($logHandle, LOCK_UN);
+
+            break;
+
+        case 'syslog':
+            switch($level) {
+                case 'ERROR':
+                    $priority = LOG_ERR;
+                    break;
+                case 'WARN':
+                    $priority = LOG_WARNING;
+                    break;
+                default:
+                    $priority = LOG_INFO;
+            }
+
+            syslog($priority, $message);
+            break;
     }
 }
 
