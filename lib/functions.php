@@ -448,8 +448,10 @@ function getLocalString($string, $encoding = '')
         $textString = $langStrings[$language][$string];
     } elseif (isset($langStrings[$defaultLanguage][$string])) {
         $textString = $langStrings[$defaultLanguage][$string];
-    } else {
+    } elseif (isset($langStrings['en'][$string])) {
         $textString = $langStrings['en'][$string];
+    } else {
+        $textString = $string;
     }
 
     // Change encoding if necessary
