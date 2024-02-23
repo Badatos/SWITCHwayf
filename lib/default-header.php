@@ -87,7 +87,7 @@
 ?>
         $('.userIdPSelection').select2({
             ajax: {
-                url: <?php echo "'".$apiURL."'" ?>,
+                url: '<?php echo $apiURL ?>',
                 delay: 250,
                 dataType: 'json',
                 data: function (params) {
@@ -117,7 +117,10 @@
         var idpSelect = $('.userIdPSelection');
         $.ajax({
             type: 'GET',
-            url: <?php echo "'".$apiURL."?lastIdp'" ?>,
+            url: '<?php echo $apiURL ?>',
+            data: {
+                lastIdp: true
+            },
         }).then(function (data) {
             // create the option and append to Select2
             // in order ot pass all info from data, we pass it in JSON String as

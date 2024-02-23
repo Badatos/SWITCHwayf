@@ -761,7 +761,7 @@
 
         $('.userIdPSelection').select2({
             ajax: {
-                url: <?php echo "'".$apiURL."'" ?>,
+                url: '<?php echo $apiURL ?>',
                 delay: 250,
                 dataType: 'json',
                 data: function(params) {
@@ -771,11 +771,7 @@
                     }
 
                     if (saml_idp_cookie && saml_idp_cookie.length > 0) {
-                        var query = {
-                            search: params.term,
-                            page: params.page || 1,
-                            idpCookie: saml_idp_cookie
-                        }
+                        query.idpCookie = saml_idp_cookie;
                     }
                     // Query parameters will be ?search=[term]&page=[page]
                     return query;
@@ -800,7 +796,11 @@
 
         $.ajax({
             type: 'GET',
-            url: <?php echo "'".$apiURL."?lastIdp&idpCookie='+"."saml_idp_cookie" ?>,
+            url: '<?php echo $apiURL ?>',
+            data: {
+                lastIdp: true,
+                idpCookie: saml_idp_cookie
+            },
         }).then(function(data) {
             // create the option and append to Select2
             // in order ot pass all info from data, we pass it in JSON String as
