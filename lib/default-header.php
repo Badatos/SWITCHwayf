@@ -100,11 +100,6 @@
                 },
                 error: function(jqxhr, status, exception) {
                     console.error('Exception:', exception);
-<?php
-                    if ($developmentMode) {
-                        echo("alert('Exception:', exception);");
-                    }
-?>
                 }
             },
             placeholder: "<?php echo getLocalString('select_idp') ?>",
