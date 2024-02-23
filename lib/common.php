@@ -24,6 +24,9 @@ require_once($topLevelDir . '/lib/idpApiObjects.php');
 // Set default config options
 initConfigOptions();
 
+// Logger initialisation
+initLogger();
+
 // Read custom locales
 if (file_exists($topLevelDir . '/lib/custom-languages.php')) {
     require_once($topLevelDir . '/lib/custom-languages.php');
