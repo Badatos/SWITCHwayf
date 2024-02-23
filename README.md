@@ -95,21 +95,7 @@ Installation
    'WAYF.php' to avoid setting the PHP handler explicitly on
    this file.
 
-6. When using the embedded WAYF feature it might be necessary to add a line to
-   the Apache configuration like below in order to prevent certain web browsers
-   from not displaying the Embedded WAYF or parts of it:
-
-        Header set P3P "CP=\"NOI CUR DEVa OUR IND COM NAV PRE\""
-
-   For that to work, the Apache header extension must also be enabled
-   with a command like (for Debian):
-
-        a2enmod headers
-        /etc/init.d/apache2 reload
-
-   See http://www.w3.org/P3P/ for more details on P3P.
-
-7. Test access by calling the WAYF with a URL like:
+6. Test access by calling the WAYF with a URL like:
 
    https://your.host.com/#SOME_PATH#/WAYF
 
@@ -117,7 +103,7 @@ Installation
    will automatically be able to detect whether it receives a Shibboleth
    authentication request or a Discovery Service request.
 
-8. Ensure to set the mode of the SWITCHwayf from developmentMode
+7. Ensure to set the mode of the SWITCHwayf from developmentMode
    to production by setting
    '$developmentMode = false;'
    in SWITCHwayf/etc/config.php
