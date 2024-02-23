@@ -86,32 +86,35 @@
             if ($bodyType == "settings" || $bodyType == "WAYF") {
 ?>
         $('.userIdPSelection').select2({
-          ajax: {
-            url: <?php echo "'".$apiURL."'" ?>,
-            delay: 250,
-            dataType: 'json',
-            data: function (params) {
-            var query = {
-            search: params.term,
-            page: params.page || 1
-            }
-            // Query parameters will be ?search=[term]&page=[page]
-            return query;
+            ajax: {
+                url: <?php echo "'".$apiURL."'" ?>,
+                delay: 250,
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                error: function(jqxhr, status, exception) {
+                    console.error('Exception:', exception);
+<?php
+                    if ($developmentMode) {
+                        echo("alert('Exception:', exception);");
+                    }
+?>
+                }
             },
-            error: function(jqxhr, status, exception) {
-              console.error('Exception:', exception);
-              <?php
-              if ($developmentMode) {
-                  echo("alert('Exception:', exception);");
-              } ?>
+            placeholder: "<?php echo getLocalString('select_idp') ?>",
+            allowClear: true,
+            language: "<?php echo $language ?>",
+            templateResult: formatIdp,
+            templateSelection: formatIdp,
+            escapeMarkup: function (text) {
+                return text;
             }
-          },
-          placeholder: "<?php echo getLocalString('select_idp') ?>",
-          allowClear: true,
-          language: "<?php echo $language ?>",
-          templateResult: formatIdp,
-          templateSelection: formatIdp,
-          escapeMarkup: function (text) { return text; }
         });
         // Auto-submit when an idp is selected
         // $('.userIdPSelection').on('select2:select', function (e) {
@@ -128,18 +131,20 @@
             // in order ot pass all info from data, we pass it in JSON String as
             // text, ans select2Functions will build it back
             if(data.id != null) {
-              var option = new Option(JSON.stringify(data), data.id, true, true);
-              idpSelect.append(option).trigger('change');
+                var option = new Option(JSON.stringify(data), data.id, true, true);
+                idpSelect.append(option).trigger('change');
             }
         });
 <?php
             } elseif ($bodyType == "notice" && $permanentUserIdP != '') {
 ?>
         $('.userIdPSelectionNotice').select2({
-          allowClear: false,
-          templateSelection: formatIdpNotice,
-          disabled: true,
-          escapeMarkup: function (text) { return text; }
+            allowClear: false,
+            templateSelection: formatIdpNotice,
+            disabled: true,
+            escapeMarkup: function (text) {
+                return text;
+            }
         });
 <?php
             }

@@ -755,67 +755,68 @@
     select2Translation.type = 'text/javascript';
 
     select2Translation.onload = function() {
-      console.log("Select2 Translation loaded !");
+        console.log("Select2 Translation loaded !");
 
-      var saml_idp_cookie = getCookie('_saml_idp');
+        var saml_idp_cookie = getCookie('_saml_idp');
 
-      $('.userIdPSelection').select2({
-        ajax: {
-          url: <?php echo "'".$apiURL."'" ?>,
-          delay: 250,
-          dataType: 'json',
-          data: function(params) {
-            var query = {
-              search: params.term,
-              page: params.page || 1,
+        $('.userIdPSelection').select2({
+            ajax: {
+                url: <?php echo "'".$apiURL."'" ?>,
+                delay: 250,
+                dataType: 'json',
+                data: function(params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                    }
+
+                    if (saml_idp_cookie && saml_idp_cookie.length > 0) {
+                        var query = {
+                            search: params.term,
+                            page: params.page || 1,
+                            idpCookie: saml_idp_cookie
+                        }
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                error: function(jqxhr, status, exception) {
+                    console.error('Exception:', exception);
+    <?php
+                    if ($developmentMode) {
+                        echo("alert('Exception:', exception);");
+                    }
+    ?>
+                }
+            },
+            placeholder: "<?php echo getLocalString('select_idp') ?>",
+            allowClear: true,
+            language: "<?php echo $language ?>",
+            templateResult: formatIdp,
+            templateSelection: formatIdp,
+            escapeMarkup: function(text) {
+                return text;
             }
+        });
 
-            if (saml_idp_cookie && saml_idp_cookie.length > 0) {
-              var query = {
-                search: params.term,
-                page: params.page || 1,
-                idpCookie: saml_idp_cookie
-              }
-            }
-            // Query parameters will be ?search=[term]&page=[page]
-            return query;
-          },
-          error: function(jqxhr, status, exception) {
-            console.error('Exception:', exception);
-            <?php
-          if ($developmentMode) {
-              echo("alert('Exception:', exception);");
-          }
-        ?>
-          }
-        },
-        placeholder: "<?php echo getLocalString('select_idp') ?>",
-        allowClear: true,
-        language: "<?php echo $language ?>",
-        templateResult: formatIdp,
-        templateSelection: formatIdp,
-        escapeMarkup: function(text) {
-          return text;
-        }
-      });
-      // Auto-submit when an idp is selected
-      $('.userIdPSelection').on('select2:select', function(e) {
-        document.getElementById("IdPList").submit();
-      });
-      // Preselect last used IdP
-      // Fetch the preselected item, and add to the control
-      var idpSelect = $('.userIdPSelection');
+        // Auto-submit when an idp is selected
+        $('.userIdPSelection').on('select2:select', function(e) {
+            document.getElementById("IdPList").submit();
+        });
+        // Preselect last used IdP
+        // Fetch the preselected item, and add to the control
+        var idpSelect = $('.userIdPSelection');
 
-      $.ajax({
-        type: 'GET',
-        url: <?php echo "'".$apiURL."?lastIdp&idpCookie='+"."saml_idp_cookie" ?>,
-      }).then(function(data) {
-        // create the option and append to Select2
-        // in order ot pass all info from data, we pass it in JSON String as
-        // text, ans select2Functions will build it back
-        var option = new Option(JSON.stringify(data), data.id, true, true);
-        idpSelect.append(option).trigger('change');
-      });
+        $.ajax({
+            type: 'GET',
+            url: <?php echo "'".$apiURL."?lastIdp&idpCookie='+"."saml_idp_cookie" ?>,
+        }).then(function(data) {
+            // create the option and append to Select2
+            // in order ot pass all info from data, we pass it in JSON String as
+            // text, ans select2Functions will build it back
+            var option = new Option(JSON.stringify(data), data.id, true, true);
+            idpSelect.append(option).trigger('change');
+        });
 
     };
     head.appendChild(select2Translation);
