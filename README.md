@@ -198,6 +198,11 @@ repository, which is located here:
 
 Specific Update Instructions
 ----------------------------
+* Updates from versions 2.1 and before
+  The logging configuration changed considerably.
+  The settings $useLogging and $WAYFLogFile no longer exist.
+  Instead $logRequests, $logDestination, $logFile and $logFacility were introduced.
+  Review these settings in config.dist.php and apply them to your local configuration.
 
 * Updates from versions before 2.0
   It's best to install version 2.0 or newer from scratch and
