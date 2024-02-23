@@ -12,21 +12,22 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 	<link rel="stylesheet" href="<?php echo $_SERVER['SCRIPT_NAME'] ?>/styles.css" type="text/css">
 	<script type="text/javascript" src="<?php echo $javascriptURL ?>/jquery.js"></script>
-	<?php
-
-    if (isUseSelect2()) {
-        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.min.css" type="text/css" >'.PHP_EOL;
-        // Version of select2 : 4.0.6-rc.0
-        // Availability https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js
-        // Languages available at https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/i18n/<2letterCode>.js
-        echo '<script type="text/javascript" src="'.$javascriptURL .'/select2.min.js"></script>'.PHP_EOL;
-        echo '<script type="text/javascript" src="'.$javascriptURL .'/i18n/'.$language.'.js"></script>'.PHP_EOL;
-        echo '<script type="text/javascript" src="'.$javascriptURL .'/select2Functions.js"></script>'.PHP_EOL;
-    } elseif ($useImprovedDropDownList) {
-        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/ImprovedDropDown.css" type="text/css">'.PHP_EOL;
-        echo '<script type="text/javascript" src="'. $javascriptURL .'/improvedDropDown.js"></script>'.PHP_EOL;
+<?php
+    switch($selectionListType) {
+        case 'select2':
+            echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.min.css" type="text/css" >'.PHP_EOL;
+            // Version of select2 : 4.0.6-rc.0
+            // Availability https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js
+            // Languages available at https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/i18n/<2letterCode>.js
+            echo '<script type="text/javascript" src="'.$javascriptURL .'/select2.min.js"></script>'.PHP_EOL;
+            echo '<script type="text/javascript" src="'.$javascriptURL .'/i18n/'.$language.'.js"></script>'.PHP_EOL;
+            echo '<script type="text/javascript" src="'.$javascriptURL .'/select2Functions.js"></script>'.PHP_EOL;
+            break;
+        case 'improved':
+            echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/ImprovedDropDown.css" type="text/css">'.PHP_EOL;
+            echo '<script type="text/javascript" src="'. $javascriptURL .'/improvedDropDown.js"></script>'.PHP_EOL;
+            break;
     }
-
 ?>
 	<script type="text/javascript">
 	<!--
@@ -79,9 +80,11 @@
 
 		setFocus();
 
-<?php if (isUseSelect2()) {
-    if ($bodyType == "settings" || $bodyType == "WAYF") {
-        ?>
+<?php
+    switch($selectionListType) {
+        case 'select2':
+            if ($bodyType == "settings" || $bodyType == "WAYF") {
+?>
         $('.userIdPSelection').select2({
           ajax: {
             url: <?php echo "'".$apiURL."'" ?>,
@@ -129,9 +132,9 @@
               idpSelect.append(option).trigger('change');
             }
         });
-		<?php
-    } elseif ($bodyType == "notice" && $permanentUserIdP != '') {
-        ?>
+<?php
+            } elseif ($bodyType == "notice" && $permanentUserIdP != '') {
+?>
         $('.userIdPSelectionNotice').select2({
           allowClear: false,
           templateSelection: formatIdpNotice,
@@ -139,10 +142,10 @@
           escapeMarkup: function (text) { return text; }
         });
 <?php
-    }
-} elseif ($useImprovedDropDownList) {
-    ?>
-
+            }
+            break;
+        case 'improved':
+?>
 			var searchText = '<?php echo getLocalString('search_idp', 'js') ?>';
 			$("#userIdPSelection:enabled option[value='-']").text(searchText);
 
@@ -153,8 +156,10 @@
 				noItemsText: '<?php echo getLocalString('no_idp_available', 'js') ?>',
 				disableRemoteLogos: <?php echo ($disableRemoteLogos) ? 'true' : 'false' ?>
 			});
-		<?php
-} ?>
+<?php
+            break;
+    }
+?>
 
 		// Ajust height of submit button to select
 		$('[name="Select"]').height($('#userIdPSelection').outerHeight()+2);
