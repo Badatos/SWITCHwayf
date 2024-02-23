@@ -15,9 +15,6 @@ require_once($topLevelDir . '/lib/common.php');
 // Back-wards compatibility logic
 /*------------------------------------------------*/
 
-// Set P3P headers just in case they were not set in Apache already
-header('P3P: CP="NOI CUR DEVa OUR IND COM NAV PRE"');
-
 // This is for back-wards compatibility with very old versions of the WAYF
 if (isset($_GET['getArguments']) && isset($_GET['origin']) && isset($_GET['redirect'])) {
     redirectTo($_SERVER['PHP_SELF'].'/redirect/'.$_GET['origin'].'?'.$_GET['getArguments']);
