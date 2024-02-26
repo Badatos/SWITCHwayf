@@ -156,13 +156,13 @@
 				noItemsText: '<?php echo getLocalString('no_idp_available', 'js') ?>',
 				disableRemoteLogos: <?php echo ($disableRemoteLogos) ? 'true' : 'false' ?>
 			});
+            // Ajust height of submit button to select
+            $('[name="Select"]').height($('#userIdPSelection').outerHeight()+2);
 <?php
             break;
     }
 ?>
 
-		// Ajust height of submit button to select
-		$('[name="Select"]').height($('#userIdPSelection').outerHeight()+2);
 	}
 
 	// Call init function when DOM is ready
