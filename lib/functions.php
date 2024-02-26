@@ -41,6 +41,7 @@ function initConfigOptions()
     global $privacyURL;
     global $imageURL;
     global $javascriptURL;
+    global $apiURL;
     global $cssURL;
     global $logoURL;
     global $smallLogoURL;
@@ -98,6 +99,7 @@ function initConfigOptions()
     $defaults['supportContactEmail'] = 'support-contact@'.$defaults['commonDomain'];
     $defaults['imageURL'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/images';
     $defaults['javascriptURL'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/js';
+    $defaults['apiURL'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/api.php';
     $defaults['cssURL'] = 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/css';
     $defaults['IDPConfigFile'] = 'IDProvider.conf.php';
     $defaults['backupIDPConfigFile'] = 'IDProvider.conf.php';
