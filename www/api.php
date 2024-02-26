@@ -8,10 +8,23 @@
 $topLevelDir = dirname(__DIR__);
 require_once($topLevelDir . '/lib/functions.php');
 require_once($topLevelDir . '/lib/common.php');
+require_once($topLevelDir . '/lib/idpApiObjects.php');
 
 header('Content-Type: application/json');
 
-global $idpRepository;
+if (array_key_exists("idpCookie", $_GET)) {
+    // Small tweaks, because for unknown reason, the cookie value provided in GET
+    // param is not formatted as in regular cookie.
+    $idpCookie = str_replace(
+        array("%3D", "%2B", "+"),
+        array("=", " ", " "),
+        $_GET["idpCookie"]
+      );
+
+    $IDPArray = getIdPArrayFromValue($idpCookie);
+}
+
+$idpRepository = new IdpRepository($IDProviders, $IDPArray);
 
 if (array_key_exists("page", $_GET)) {
     if (array_key_exists("search", $_GET)) {

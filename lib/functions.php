@@ -19,7 +19,7 @@ function initConfigOptions()
     global $cookieSecurity;
     global $cookieValidity;
     global $showPermanentSetting;
-    global $useImprovedDropDownList;
+    global $selectionListType;
     global $disableRemoteLogos;
     global $useSAML2Metadata;
     global $SAML2MetaOverLocalConf;
@@ -60,7 +60,6 @@ function initConfigOptions()
     global $instanceIdentifier;
     global $developmentMode;
     global $topLevelDir;
-    global $useSelect2;
     global $select2PageSize;
     global $allowedCORSDomain;
     global $errorRedirectURL;
@@ -75,8 +74,7 @@ function initConfigOptions()
     $defaults['cookieSecurity'] = false;
     $defaults['cookieValidity'] = 100;
     $defaults['showPermanentSetting'] = false;
-    $defaults['useImprovedDropDownList'] = true;
-    $defaults['useSelect2'] = false;
+    $defaults['selectionListType'] = 'improved';
     $defaults['select2PageSize'] = 100;
     $defaults['allowedCORSDomain'] = '*';
     $defaults['disableRemoteLogos'] = false;
@@ -1167,37 +1165,15 @@ function isRunViaInclude()
 
 function printSubmitAction()
 {
-    if (isUseSelect2()) {
-        return "return select2CheckForm()";
-    } else {
-        return "return checkForm()";
+    global $selectionListType;
+
+    switch($selectionListType) {
+        case 'select2':
+            return "return select2CheckForm()";
+            break;
+        default:
+            return "return checkForm()";
     }
-}
-
-/******************************************************************************/
-// Getter for useSelect2: we can't only rely on config.php::$useSelect2
-// because of embeddedWAYF.
-// If SP want's to use Select2, it has to add ?useSelect2=true
-function isUseSelect2()
-{
-    global $useSelect2;
-
-    if (isRequestType('embedded-wayf.js')) {
-        if (isset($_GET["useSelect2"])) {
-            return $_GET["useSelect2"] == "true";
-        }
-        return false;
-    }
-
-    return $useSelect2;
-}
-
-function isUseSelect2Str()
-{
-    if (isUseSelect2()) {
-        return "true";
-    }
-    return "false";
 }
 
 function getSelect2PageSize()

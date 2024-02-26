@@ -62,12 +62,11 @@
 // Whether to show the checkbox to permanently remember a setting
 //$showPermanentSetting = false;
 
-// Whether or not to use the search-as-you-type feature of the drop down list
-// Enabling this will use JavaScript to convert the select element containing
-// all Identity Providers to a searchable search-as-you-type list that also
-// displays logos if available
-// Please note that select2 activation overrides the improveDropDown activation
-//$useImprovedDropDownList = true;
+// drop-down list type:
+// 'basic' for the simple one
+// 'improved' for the JavaScript-enabled one (default)
+// 'select2' for the Ajax-enabled one
+//$selectionListType = 'improved';
 
   // If true the improved drop-down-list will not display logos that
   // have to be loaded from remote URLs. That way the web browser
@@ -75,10 +74,6 @@
   // Logos that are embedded using data URIs
   // (src="data:image/png;base64...") will however still be displayed
   //$disableRemoteLogos = false;
-
-// Whether or not use Select2 drop down (experimental)
-// Attention: setting this to true, overrides $useImprovedDropDownList param
-//$useSelect2 = false;
 
 // Config to change the number of IdP fetched when using Select2 dropdown
 //$select2PageSize = 100;

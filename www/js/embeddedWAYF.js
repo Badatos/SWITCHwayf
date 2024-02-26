@@ -1,3 +1,7 @@
+<?php
+    // configuration for embedded WAYF is set on client side
+    $selectionListType = (isset($_GET["listType"]) && $_GET["listType"]) ? $_GET["listType"] : "basic";
+?>
 (function(global, factory) {
   if (typeof global.define === 'function' && global.define.amd) {
     define("wayfGlobalObject", [], global);
@@ -20,16 +24,17 @@
 
   // Declare all global variables
 
-  // Essential settings
+  // Essential settings, set on client side and transmitted to server at generation time
+  var wayf_selection_list_type = "<?php echo $selectionListType ?>"
+
+  // Essential settings, set on client side
   var wayf_sp_entityID = global.wayf_sp_entityID;
   var wayf_URL = global.wayf_URL;
   var wayf_return_url = global.wayf_return_url;
   var wayf_sp_handlerURL = global.wayf_sp_handlerURL;
 
-  // Other settings
+  // Other settings, set on client side
   var wayf_use_discovery_service = global.wayf_use_discovery_service;
-  var wayf_use_improved_drop_down_list = global.wayf_use_improved_drop_down_list;
-  var wayf_use_select2 = <?php echo isUseSelect2Str() ?>;
   var wayf_select2_page_size = global.wayf_select2_page_size;
   var wayf_disable_remote_idp_logos = global.wayf_disable_remote_idp_logos;
   var wayf_enable_entityid_matching = global.wayf_enable_entityid_matching;
@@ -75,11 +80,15 @@
   var wayf_categories = {
     <?php echo $JSONCategoryList ?>
   };
-  <?php if(!isUseSelect2()): ?>
+<?php
+    if ($selectionListType != 'select2') {
+?>
   var wayf_idps = {
     <?php echo $JSONIdPList ?>
   };
-  <?php endif ?>
+<?php
+    }
+?>
   var wayf_other_fed_idps = {};
 
   // Functions
@@ -145,7 +154,9 @@
     return false;
   }
 
-  <?php if(!isUseSelect2()) : ?>
+<?php
+    if ($selectionListType != 'select2') {
+?>
 
   function writeOptGroup(IdPElements, category) {
 
@@ -170,7 +181,9 @@
       writeHTML('</optgroup>');
     }
   }
-  <?php endif ?>
+<?php
+    }
+?>
 
   function writeHTML(a) {
     wayf_html += a;
@@ -575,7 +588,9 @@
       }, 100);
     }
   }
-  <?php if(!isUseSelect2()): ?>
+<?php
+    if ($selectionListType != 'select2') {
+?>
 
   function getOptionHTML(entityID) {
 
@@ -669,7 +684,9 @@
     // Ajust height of submit button to select
     $('[name="Select"]').height($('#userIdPSelection').outerHeight());
   }
-  <?php else: ?>
+<?php
+    } else {
+?>
 
   function loadJQuerySelect2() {
     var head = document.getElementsByTagName('head')[0];
@@ -738,74 +755,68 @@
     select2Translation.type = 'text/javascript';
 
     select2Translation.onload = function() {
-      console.log("Select2 Translation loaded !");
+        console.log("Select2 Translation loaded !");
 
-      var saml_idp_cookie = getCookie('_saml_idp');
+        var saml_idp_cookie = getCookie('_saml_idp');
 
-      $('.userIdPSelection').select2({
-        ajax: {
-          url: <?php echo "'".$apiURL."'" ?>,
-          delay: 250,
-          dataType: 'json',
-          data: function(params) {
-            var query = {
-              search: params.term,
-              page: params.page || 1,
+        $('.userIdPSelection').select2({
+            ajax: {
+                url: '<?php echo $apiURL ?>',
+                delay: 250,
+                dataType: 'json',
+                data: function(params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                    }
+
+                    if (saml_idp_cookie && saml_idp_cookie.length > 0) {
+                        query.idpCookie = saml_idp_cookie;
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                error: function(jqxhr, status, exception) {
+                    console.error('Exception:', exception);
+                }
+            },
+            placeholder: "<?php echo getLocalString('select_idp') ?>",
+            allowClear: true,
+            language: "<?php echo $language ?>",
+            templateResult: formatIdp,
+            templateSelection: formatIdp,
+            escapeMarkup: function(text) {
+                return text;
             }
+        });
 
-            if (saml_idp_cookie && saml_idp_cookie.length > 0) {
-              var query = {
-                search: params.term,
-                page: params.page || 1,
+        // Preselect last used IdP
+        // Fetch the preselected item, and add to the control
+        var idpSelect = $('.userIdPSelection');
+
+        $.ajax({
+            type: 'GET',
+            url: '<?php echo $apiURL ?>',
+            data: {
+                lastIdp: true,
                 idpCookie: saml_idp_cookie
-              }
-            }
-            // Query parameters will be ?search=[term]&page=[page]
-            return query;
-          },
-          error: function(jqxhr, status, exception) {
-            console.error('Exception:', exception);
-            <?php
-          if ($developmentMode) {
-              echo("alert('Exception:', exception);");
-          }
-        ?>
-          }
-        },
-        placeholder: "<?php echo getLocalString('select_idp') ?>",
-        allowClear: true,
-        language: "<?php echo $language ?>",
-        templateResult: formatIdp,
-        templateSelection: formatIdp,
-        escapeMarkup: function(text) {
-          return text;
-        }
-      });
-      // Auto-submit when an idp is selected
-      $('.userIdPSelection').on('select2:select', function(e) {
-        document.getElementById("IdPList").submit();
-      });
-      // Preselect last used IdP
-      // Fetch the preselected item, and add to the control
-      var idpSelect = $('.userIdPSelection');
-
-      $.ajax({
-        type: 'GET',
-        url: <?php echo "'".$apiURL."?lastIdp&idpCookie='+"."saml_idp_cookie" ?>,
-      }).then(function(data) {
-        // create the option and append to Select2
-        // in order ot pass all info from data, we pass it in JSON String as
-        // text, ans select2Functions will build it back
-        var option = new Option(JSON.stringify(data), data.id, true, true);
-        idpSelect.append(option).trigger('change');
-      });
+            },
+        }).then(function(data) {
+            // create the option and append to Select2
+            // in order ot pass all info from data, we pass it in JSON String as
+            // text, ans select2Functions will build it back
+            var option = new Option(JSON.stringify(data), data.id, true, true);
+            idpSelect.append(option).trigger('change');
+        });
 
     };
     head.appendChild(select2Translation);
 
 
   }
-  <?php endif ?>
+<?php
+    }
+?>
   (function() {
 
     var config_ok = true;
@@ -820,20 +831,6 @@
       typeof wayf_use_discovery_service !== "boolean"
     ) {
       wayf_use_discovery_service = true;
-    }
-
-    if (
-      typeof wayf_use_improved_drop_down_list === "undefined" ||
-      typeof wayf_use_improved_drop_down_list !== "boolean"
-    ) {
-      wayf_use_improved_drop_down_list = false;
-    }
-
-    if (
-      typeof wayf_use_select2 === "undefined" ||
-      typeof wayf_use_select2 !== "boolean"
-    ) {
-      wayf_use_select2 = false;
     }
 
     if (
@@ -1313,7 +1310,7 @@
       writeHTML('<input name="request_type" type="hidden" value="embedded">');
       writeHTML('<select id="user_idp" name="user_idp" class="userIdPSelection" style="margin-top: 6px; width: 100%;">');
       // SELECT2
-      if (wayf_use_select2) {
+      if (wayf_selection_list_type === 'select2') {
         writeHTML('</select>');
       } else {
         // Add first entry: "Select your IdP..."
@@ -1483,7 +1480,7 @@
     });
 
     // Load Select2 if activated
-    if (wayf_use_select2) {
+    if (wayf_selection_list_type === 'select2') {
       if (typeof jQuery === "undefined") {
         loadJQuerySelect2();
       } else {
@@ -1491,7 +1488,7 @@
       }
     } else {
       // Load JQuery and improved drop down list code if feature is enabled
-      if (wayf_use_improved_drop_down_list) {
+      if (wayf_selection_list_type === 'improved') {
         // Check if jQuery is alread loaded or version is older that this version's
         if (typeof jQuery === "undefined") {
           loadJQuery();

@@ -134,20 +134,6 @@ var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome"
 // [Optional, default: true]
 // var wayf_use_discovery_service = false;
 
-// If enabled, the Embedded WAYF will activate the
-// improved drop down list feature, which will transform the list of
-// organisations into a search-field while keeping its original function as
-// a select list. To make this work, the JQuery library will dynamically be
-// loaded if it is not yet present. Additionally, another Javascript and CSS
-// file are loaded to perform the actual transformation.
-// Please note that this feature will also display the organisations' logos,
-// which might be loaded from a remote domain. While generally not especially
-// dangerous, there is always a risk when loading content (in this case
-// images) from third party hosts.
-// Please note that select2 activation superseeds improveDropDown activation
-// [Optional, default: false]
-// var wayf_use_improved_drop_down_list = false;
-
 // If true the improved drop-down-list will not display IdP logos that
 // have to be loaded from remote URLs. That way the web browser
 // does not have to make requests to third party hosts.
@@ -331,9 +317,8 @@ var wayf_return_url = "https://my-app.switch.ch/aai/index.php?page=show_welcome"
 //-->
 </script>
 
-<!-- To fully enable select2, one have to add useSelect2 query param: -->
-<!-- <script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js?useSelect2=true"></script> -->
-<script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js"></script>
+<!-- listType parameter can be either 'basic' (default), 'improved' or 'select2' -->
+<script type="text/javascript" src="https://<?php echo $host ?><?php echo $path ?>/embedded-wayf.js?listType=basic"></script>
 
 <noscript>
   <!--

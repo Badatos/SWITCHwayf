@@ -8,13 +8,13 @@
 		<div style="text-align: center">
 
 			<select name="user_idp" id="userIdPSelection" class="userIdPSelection" tabindex="0">
-				<?php
-          // If we use select2, we don't want IDP to be in DOM, but to use AJAX instead
-          if (!isUseSelect2()) {
-              echo '<option value="-" '.$defaultSelected.'>'.getLocalString('select_idp').' ...</option>';
-              printDropDownList($IDProviders, $selectedIDP);
-          }
-            ?>
+<?php
+    // If we use select2, we don't want IDP to be in DOM, but to use AJAX instead
+    if ($selectionListType != 'select2') {
+        echo '<option value="-" '.$defaultSelected.'>'.getLocalString('select_idp').' ...</option>';
+        printDropDownList($IDProviders, $selectedIDP);
+    }
+?>
 			</select>
 
 			<input type="submit" name="Select" accesskey="s" value="<?php echo getLocalString('select_button') ?>">

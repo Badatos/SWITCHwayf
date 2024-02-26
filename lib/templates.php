@@ -22,7 +22,7 @@ if (!isset($_SERVER['REMOTE_ADDR']) || basename($_SERVER['SCRIPT_NAME']) == 'tem
 function printHeader($bodyType)
 {
     global $langStrings, $language, $imageURL, $javascriptURL, $cssURL, $logoURL;
-    global $useImprovedDropDownList, $disableRemoteLogos, $organizationLogoURL;
+    global $selectionListType, $disableRemoteLogos, $organizationLogoURL;
     global $federationURL, $organizationURL, $faqURL, $helpURL, $privacyURL;
     global $customStrings;
     global $developmentMode, $apiURL;

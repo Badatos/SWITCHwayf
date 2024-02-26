@@ -12,21 +12,22 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 	<link rel="stylesheet" href="<?php echo $_SERVER['SCRIPT_NAME'] ?>/styles.css" type="text/css">
 	<script type="text/javascript" src="<?php echo $javascriptURL ?>/jquery.js"></script>
-	<?php
-
-    if (isUseSelect2()) {
-        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.min.css" type="text/css" >'.PHP_EOL;
-        // Version of select2 : 4.0.6-rc.0
-        // Availability https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js
-        // Languages available at https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/i18n/<2letterCode>.js
-        echo '<script type="text/javascript" src="'.$javascriptURL .'/select2.min.js"></script>'.PHP_EOL;
-        echo '<script type="text/javascript" src="'.$javascriptURL .'/i18n/'.$language.'.js"></script>'.PHP_EOL;
-        echo '<script type="text/javascript" src="'.$javascriptURL .'/select2Functions.js"></script>'.PHP_EOL;
-    } elseif ($useImprovedDropDownList) {
-        echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/ImprovedDropDown.css" type="text/css">'.PHP_EOL;
-        echo '<script type="text/javascript" src="'. $javascriptURL .'/improvedDropDown.js"></script>'.PHP_EOL;
+<?php
+    switch($selectionListType) {
+        case 'select2':
+            echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/select2.min.css" type="text/css" >'.PHP_EOL;
+            // Version of select2 : 4.0.6-rc.0
+            // Availability https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js
+            // Languages available at https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/i18n/<2letterCode>.js
+            echo '<script type="text/javascript" src="'.$javascriptURL .'/select2.min.js"></script>'.PHP_EOL;
+            echo '<script type="text/javascript" src="'.$javascriptURL .'/i18n/'.$language.'.js"></script>'.PHP_EOL;
+            echo '<script type="text/javascript" src="'.$javascriptURL .'/select2Functions.js"></script>'.PHP_EOL;
+            break;
+        case 'improved':
+            echo '<link rel="stylesheet" href="'. $_SERVER['SCRIPT_NAME'] .'/ImprovedDropDown.css" type="text/css">'.PHP_EOL;
+            echo '<script type="text/javascript" src="'. $javascriptURL .'/improvedDropDown.js"></script>'.PHP_EOL;
+            break;
     }
-
 ?>
 	<script type="text/javascript">
 	<!--
@@ -79,70 +80,72 @@
 
 		setFocus();
 
-<?php if (isUseSelect2()) {
-    if ($bodyType == "settings" || $bodyType == "WAYF") {
-        ?>
+<?php
+    switch($selectionListType) {
+        case 'select2':
+            if ($bodyType == "settings" || $bodyType == "WAYF") {
+?>
         $('.userIdPSelection').select2({
-          ajax: {
-            url: <?php echo "'".$apiURL."'" ?>,
-            delay: 250,
-            dataType: 'json',
-            data: function (params) {
-            var query = {
-            search: params.term,
-            page: params.page || 1
-            }
-            // Query parameters will be ?search=[term]&page=[page]
-            return query;
+            ajax: {
+                url: '<?php echo $apiURL ?>',
+                delay: 250,
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                error: function(jqxhr, status, exception) {
+                    console.error('Exception:', exception);
+                }
             },
-            error: function(jqxhr, status, exception) {
-              console.error('Exception:', exception);
-              <?php
-              if ($developmentMode) {
-                  echo("alert('Exception:', exception);");
-              } ?>
+            placeholder: "<?php echo getLocalString('select_idp') ?>",
+            allowClear: true,
+            language: "<?php echo $language ?>",
+            templateResult: formatIdp,
+            templateSelection: formatIdp,
+            escapeMarkup: function (text) {
+                return text;
             }
-          },
-          placeholder: "<?php echo getLocalString('select_idp') ?>",
-          allowClear: true,
-          language: "<?php echo $language ?>",
-          templateResult: formatIdp,
-          templateSelection: formatIdp,
-          escapeMarkup: function (text) { return text; }
         });
-        // Auto-submit when an idp is selected
-        // $('.userIdPSelection').on('select2:select', function (e) {
-        //   document.getElementById("IdPList").submit();
-        // });
+
         // Preselect last used IdP
         // Fetch the preselected item, and add to the control
         var idpSelect = $('.userIdPSelection');
         $.ajax({
             type: 'GET',
-            url: <?php echo "'".$apiURL."?lastIdp'" ?>,
+            url: '<?php echo $apiURL ?>',
+            data: {
+                lastIdp: true
+            },
         }).then(function (data) {
             // create the option and append to Select2
             // in order ot pass all info from data, we pass it in JSON String as
             // text, ans select2Functions will build it back
             if(data.id != null) {
-              var option = new Option(JSON.stringify(data), data.id, true, true);
-              idpSelect.append(option).trigger('change');
+                var option = new Option(JSON.stringify(data), data.id, true, true);
+                idpSelect.append(option).trigger('change');
             }
         });
-		<?php
-    } elseif ($bodyType == "notice" && $permanentUserIdP != '') {
-        ?>
+<?php
+            } elseif ($bodyType == "notice" && $permanentUserIdP != '') {
+?>
         $('.userIdPSelectionNotice').select2({
-          allowClear: false,
-          templateSelection: formatIdpNotice,
-          disabled: true,
-          escapeMarkup: function (text) { return text; }
+            allowClear: false,
+            templateSelection: formatIdpNotice,
+            disabled: true,
+            escapeMarkup: function (text) {
+                return text;
+            }
         });
 <?php
-    }
-} elseif ($useImprovedDropDownList) {
-    ?>
-
+            }
+            break;
+        case 'improved':
+?>
 			var searchText = '<?php echo getLocalString('search_idp', 'js') ?>';
 			$("#userIdPSelection:enabled option[value='-']").text(searchText);
 
@@ -153,11 +156,13 @@
 				noItemsText: '<?php echo getLocalString('no_idp_available', 'js') ?>',
 				disableRemoteLogos: <?php echo ($disableRemoteLogos) ? 'true' : 'false' ?>
 			});
-		<?php
-} ?>
+            // Ajust height of submit button to select
+            $('[name="Select"]').height($('#userIdPSelection').outerHeight()+2);
+<?php
+            break;
+    }
+?>
 
-		// Ajust height of submit button to select
-		$('[name="Select"]').height($('#userIdPSelection').outerHeight()+2);
 	}
 
 	// Call init function when DOM is ready
