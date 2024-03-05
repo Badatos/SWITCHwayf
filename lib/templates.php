@@ -37,7 +37,7 @@ function printHeader($bodyType)
 function printWAYF()
 {
     global $selectedIDP, $language, $IDProviders, $SProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
-    global $customStrings;
+    global $customStrings, $selectionListType;
 
     if (!isset($showPermanentSetting)) {
         $showPermanentSetting = false;
@@ -96,7 +96,7 @@ function printWAYF()
 function printSettings()
 {
     global $selectedIDP, $language, $IDProviders, $redirectCookieName;
-    global $customStrings;
+    global $customStrings, $selectionListType;
 
     $actionURL = $_SERVER['SCRIPT_NAME'].'?'.htmlentities($_SERVER['QUERY_STRING']);
     $defaultSelected = ($selectedIDP == '-') ? 'selected="selected"' : '';
