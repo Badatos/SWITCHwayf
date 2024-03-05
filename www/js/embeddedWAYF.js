@@ -1,7 +1,3 @@
-<?php
-    // configuration for embedded WAYF is set on client side
-    $selectionListType = (isset($_GET["listType"]) && $_GET["listType"]) ? $_GET["listType"] : "basic";
-?>
 (function(global, factory) {
   if (typeof global.define === 'function' && global.define.amd) {
     define("wayfGlobalObject", [], global);
