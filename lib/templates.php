@@ -37,7 +37,7 @@ function printHeader($bodyType)
 function printWAYF()
 {
     global $selectedIDP, $language, $IDProviders, $SProviders, $redirectCookieName, $imageURL, $redirectStateCookieName, $showPermanentSetting;
-    global $customStrings;
+    global $customStrings, $selectionListType;
 
     if (!isset($showPermanentSetting)) {
         $showPermanentSetting = false;
@@ -96,7 +96,7 @@ function printWAYF()
 function printSettings()
 {
     global $selectedIDP, $language, $IDProviders, $redirectCookieName;
-    global $customStrings;
+    global $customStrings, $selectionListType;
 
     $actionURL = $_SERVER['SCRIPT_NAME'].'?'.htmlentities($_SERVER['QUERY_STRING']);
     $defaultSelected = ($selectedIDP == '-') ? 'selected="selected"' : '';
@@ -303,6 +303,9 @@ function printEmbeddedWAYFScript()
     global $customStrings;
     global $apiURL, $developmentMode;
 
+    // configuration for embedded WAYF is set on client side
+    $selectionListType = (isset($_GET["listType"]) && $_GET["listType"]) ? $_GET["listType"] : "basic";
+
     // Set values that are used in the java script
     $loginWithString = getLocalString('login_with');
     $makeSelectionString = getLocalString('make_selection', 'js');
@@ -318,50 +321,51 @@ function printEmbeddedWAYFScript()
     $lastUsedIdPsString = addslashes(getLocalString('last_used'));
     $redirectCookie = (isset($_COOKIE[$redirectCookieName]) && !empty($_COOKIE[$redirectCookieName])) ?  $_COOKIE[$redirectCookieName] : '';
 
-    // Generate list of Identity Providers
-    $JSONIdPArray = array();
-    $JSONCategoryArray = array();
-    foreach ($IDProviders as $key => $IDProvider) {
+    if ($selectionListType != 'select2') {
+        // Generate list of Identity Providers
+        $JSONIdPArray = array();
+        $JSONCategoryArray = array();
+        foreach ($IDProviders as $key => $IDProvider) {
 
-        // Get IdP Name
-        if (isset($IDProvider[$language]['Name'])) {
-            $IdPName = addslashes($IDProvider[$language]['Name']);
-        } else {
-            $IdPName = addslashes($IDProvider['Name']);
-        }
+            // Get IdP Name
+            if (isset($IDProvider[$language]['Name'])) {
+                $IdPName = addslashes($IDProvider[$language]['Name']);
+            } else {
+                $IdPName = addslashes($IDProvider['Name']);
+            }
 
-        // Set selected attribute
-        $selected = ($selectedIDP == $key) ? ' selected:"true",' : '' ;
-        $IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
+            // Set selected attribute
+            $selected = ($selectedIDP == $key) ? ' selected:"true",' : '' ;
+            $IdPType = isset($IDProviders[$key]['Type']) ? $IDProviders[$key]['Type'] : '';
 
-        // SSO
-        if (isset($IDProvider['SSO'])) {
-            $IdPSSO = $IDProvider['SSO'];
-        } else {
-            $IdPSSO = '';
-        }
+            // SSO
+            if (isset($IDProvider['SSO'])) {
+                $IdPSSO = $IDProvider['SSO'];
+            } else {
+                $IdPSSO = '';
+            }
 
-        // Logo URL
-        if (isset($IDProvider['Logo']['URL'])) {
-            $IdPLogoURL = $IDProvider['Logo']['URL'];
-        } else {
-            $IdPLogoURL = '';
-        }
+            // Logo URL
+            if (isset($IDProvider['Logo']['URL'])) {
+                $IdPLogoURL = $IDProvider['Logo']['URL'];
+            } else {
+                $IdPLogoURL = '';
+            }
 
-        // Add other information to find IdP
-        // $IdPData = getDomainNameFromURI($key);
-        // $IdPData .= composeOptionData($IDProvider);
-        $IdPData= buildIdpData($IDProvider, $key);
-        $IdPData = addslashes($IdPData);
+            // Add other information to find IdP
+            // $IdPData = getDomainNameFromURI($key);
+            // $IdPData .= composeOptionData($IDProvider);
+            $IdPData= buildIdpData($IDProvider, $key);
+            $IdPData = addslashes($IdPData);
 
-        // Skip non-IdP entries
-        if ($IdPType == '') {
-            continue;
-        }
+            // Skip non-IdP entries
+            if ($IdPType == '') {
+                continue;
+            }
 
-        // Fill category and IdP buckets
-        if ($IdPType == 'category') {
-            $JSONCategoryArray[] = <<<ENTRY
+            // Fill category and IdP buckets
+            if ($IdPType == 'category') {
+                $JSONCategoryArray[] = <<<ENTRY
 
 "{$key}":{
 	type:"{$IdPType}",
@@ -379,10 +383,11 @@ ENTRY;
 	data:"{$IdPData}"
 }
 ENTRY;
+            }
         }
+        $JSONIdPList = join(',', $JSONIdPArray);
+        $JSONCategoryList = join(',', $JSONCategoryArray);
     }
-    $JSONIdPList = join(',', $JSONIdPArray);
-    $JSONCategoryList = join(',', $JSONCategoryArray);
 
     // Locales for javascript
     $searchText = getLocalString('search_idp', 'js');
