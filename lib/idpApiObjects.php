@@ -160,10 +160,10 @@ final class IdpRepository
                 continue;
             }
 
-	    // Remove the following keys from $value:
-	    // NameForSort
-            // IndexForSort
-	    // TypeForSort
+        // Remove the following keys from $value:
+        // NameForSort
+        // IndexForSort
+        // TypeForSort
             unset($value['NameForSort']);
             unset($value['IndexForSort']);
             unset($value['TypeForSort']);

@@ -264,7 +264,7 @@ if ($useKerberos && !isset($kerberosRealm)) {
         if ($name == "Authorization") {
             // ... then the user agent is attempting Negotiate, so we
             // redirect to the soft link (that points back to this script)
-            // which is	 protected by mod_auth_kerb.
+            // which is protected by mod_auth_kerb.
             $url = $kerberosRedirectURL."?".$_SERVER['QUERY_STRING'];
             redirectTo($url);
             exit();

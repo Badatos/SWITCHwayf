@@ -1023,7 +1023,7 @@ function sortIdentityProviders(&$IDProviders)
         // Add IdP
         $orderedCategories[$IDProvider['Type']]['IdPs'][$entityId] = $IDProvider;
 
-	if (isset($IDProvider['Type'])) {
+        if (isset($IDProvider['Type'])) {
             $orderedCategories[$IDProvider['Type']]['IdPs'][$entityId]['TypeForSort'] = removeAccents($IDProvider['Type']);
         }
         if (isset($IDProvider['Index'])) {

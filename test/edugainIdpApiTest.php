@@ -22,26 +22,25 @@ final class IdpApiTest extends TestCase
 {
     public function testSort()
     {
-	$customStrings = array(
-    		'federationName' => 'Fédération eduGAIN',
-    		'providersIdPId' => 'https://dev-idp-fournisseurs.renater.fr/idp/shibboleth',
-   		 'supdataIdPId'   => 'https://dev-idp-supdata.renater.fr/idp/shibboleth'
-	);
+        $customStrings = array(
+            'federationName' => 'Fédération eduGAIN',
+            'providersIdPId' => 'https://dev-idp-fournisseurs.renater.fr/idp/shibboleth',
+             'supdataIdPId'  => 'https://dev-idp-supdata.renater.fr/idp/shibboleth'
+        );
         time_elapsed("[Sort] Init");
 
-	$IDProviders = array();
-$IDProviders['unknown'] = array (
-    'Name' => $customStrings['federationName'],
-    'Type' => 'category'
-);
-
-$IDProviders['external'] = array (
-    'Name' => getLocalString('external'),
-    'Type' => 'category'
-);
-	$language="fr";
+        $IDProviders = array();
+        $IDProviders['unknown'] = array (
+            'Name' => $customStrings['federationName'],
+            'Type' => 'category'
+        );
+        $IDProviders['external'] = array (
+            'Name' => getLocalString('external'),
+            'Type' => 'category'
+        );
+        $language="fr";
         require("edugain-IDProvider.metadata.php");
-	$IDProviders = mergeInfo($IDProviders, $metadataIDProviders, true, true);
+        $IDProviders = mergeInfo($IDProviders, $metadataIDProviders, true, true);
 
         time_elapsed("[Sort] doSort");
 
@@ -49,7 +48,7 @@ $IDProviders['external'] = array (
 
         time_elapsed("[Sort] endSort");
          $repo = new IdpRepository($metadataIDProviders);
-    
+
         time_elapsed("[GetFirstPage] Creating repository");
     }
 

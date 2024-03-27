@@ -368,8 +368,8 @@ function printEmbeddedWAYFScript()
                 $JSONCategoryArray[] = <<<ENTRY
 
 "{$key}":{
-	type:"{$IdPType}",
-	name:"{$IdPName}"
+    type:"{$IdPType}",
+    name:"{$IdPName}"
 }
 
 ENTRY;
@@ -377,10 +377,10 @@ ENTRY;
             $JSONIdPArray[] = <<<ENTRY
 
 "{$key}":{ {$selected}
-	type:"{$IdPType}",
-	name:"{$IdPName}",
-	logoURL:"{$IdPLogoURL}",
-	data:"{$IdPData}"
+    type:"{$IdPType}",
+    name:"{$IdPName}",
+    logoURL:"{$IdPLogoURL}",
+    data:"{$IdPData}"
 }
 ENTRY;
             }
