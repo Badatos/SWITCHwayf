@@ -40,6 +40,14 @@ pre {
 	margin-bottom: 0;
 }
 
+.select2-result-repository__logo img {
+	margin-top: 6px;
+}
+
+.select2-result-repository__title {
+	font-size: 12px;
+}
+
 .box
 {
 	width: 600px;
