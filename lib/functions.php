@@ -338,13 +338,26 @@ function getTopLevelDomain($string)
 }
 
 /******************************************************************************/
-// Parses the reverse dns lookup hostname out of a string and returns domain
-function getDomainNameFromURIHint()
+// Returns client IP adress, from X-Forward-For header if set, from source
+// address otherwise
+function getClientIPAdress()
+{
+    if (array_key_exists("HTTP_X_FORWARDED_FOR", $_SERVER)) {
+        $ips = explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]);
+        return $ips[0];
+    } else {
+        return $_SERVER["REMOTE_ADDR"];
+    }
+}
+
+/******************************************************************************/
+// Determines the IdP according to the client domain name
+function getDomainNameHint($clientIP)
 {
     global $IDProviders;
 
-    $clientHostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-    if ($clientHostname == $_SERVER['REMOTE_ADDR']) {
+    $clientHostname = gethostbyaddr($clientIP);
+    if ($clientHostname == $clientIP) {
         return '-';
     }
 
@@ -355,11 +368,13 @@ function getDomainNameFromURIHint()
     }
 
     // Return first matching IdP entityID that contains the client domain name
-    foreach ($IDProviders as $key => $value) {
-        if (
-               preg_match('/^http.+'.$clientDomainName.'/', $key)
-            || preg_match('/^urn:.+'.$clientDomainName.'$/', $key)) {
-            return $key;
+    foreach ($IDProviders as $name => $idp) {
+        if (is_array($idp) && array_key_exists("DomainHint", $idp)) {
+            foreach ($idp["DomainHint"] as $domain) {
+                if ($clientDomainName == $domain) {
+                    return $name;
+                }
+            }
         }
     }
 
@@ -494,26 +509,26 @@ function getIdPPathInfoHint()
     // Check for entityID hostnames of all available IdPs
     foreach ($IDProviders as $key => $value) {
         // Only check actual IdPs
-        if (
-                isset($value['SSO'])
-                && !empty($value['SSO'])
-                && $value['Type'] != 'wayf'
-                && isPartOfPathInfo(getHostNameFromURI($key))
-                ) {
-            return $key;
+        if (isset($value['SSO'])
+            && !empty($value['SSO'])
+            && $value['Type'] != 'wayf') {
+            $hostName = getHostNameFromURI($key);
+            if ($hostName && preg_match('|/'.$hostName.'|', $_SERVER['PATH_INFO'])) {
+                return $key;
+            }
         }
     }
 
     // Check for entityID domain names of all available IdPs
     foreach ($IDProviders as $key => $value) {
         // Only check actual IdPs
-        if (
-                isset($value['SSO'])
-                && !empty($value['SSO'])
-                && $value['Type'] != 'wayf'
-                && isPartOfPathInfo(getDomainNameFromURI($key))
-                ) {
-            return $key;
+        if (isset($value['SSO'])
+            && !empty($value['SSO'])
+            && $value['Type'] != 'wayf') {
+            $domainName = getDomainNameFromURI($key);
+            if ($domainName && preg_match('|/'.$domainName.'|', $_SERVER['PATH_INFO'])) {
+                return $key;
+            }
         }
     }
 
@@ -558,16 +573,14 @@ function getKerberosRealm($string)
 
 
 /******************************************************************************/
-// Determines the IdP according to the IP address if possible
-function getIPAdressHint()
+// Determines the IdP according to the client IP adress
+function getIPAdressHint($clientIP)
 {
     global $IDProviders;
 
     foreach ($IDProviders as $name => $idp) {
-        if (is_array($idp) && array_key_exists("IP", $idp)) {
-            $clientIP = $_SERVER["REMOTE_ADDR"];
-
-            foreach ($idp["IP"] as $network) {
+        if (is_array($idp) && array_key_exists("IPHint", $idp)) {
+            foreach ($idp["IPHint"] as $network) {
                 if (isIPinCIDRBlock($network, $clientIP)) {
                     return $name;
                 }
@@ -615,7 +628,7 @@ function convertIPtoBinaryForm($ip)
 
     //  Handle IPv4 IP
     if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
-        return base_convert(ip2long($ip), 10, 2);
+        return sprintf("%032s", base_convert(ip2long($ip), 10, 2));
     }
 
     // Return false if IP is neither IPv4 nor a IPv6 IP
