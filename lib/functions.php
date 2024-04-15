@@ -845,6 +845,22 @@ function initLogger()
 
 }
 
+// release connection to system logger
+function releaseLogger()
+{
+    global $logDestination, $logHandle;
+
+    switch($logDestination) {
+        case 'file':
+            fclose($logHandle);
+            break;
+
+        case 'syslog':
+            closelog();
+            break;
+    }
+}
+
 /******************************************************************************/
 // Logs a debug message
 function logDebug($infoMsg)
