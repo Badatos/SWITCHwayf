@@ -268,6 +268,7 @@ function checkIDPAndShowErrors($IDP)
     $message .= "</code>\n";
 
     printError($message);
+    releaseLogger();
     exit;
 }
 
@@ -893,6 +894,7 @@ function logError($errorMsg)
 function logFatalErrorAndExit($errorMsg)
 {
     logError($errorMsg);
+    releaseLogger();
     exit;
 }
 

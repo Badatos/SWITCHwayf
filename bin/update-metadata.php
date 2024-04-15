@@ -243,6 +243,8 @@ if (isset($metadataURL) && $metadataURL) {
     }
 }
 
+releaseLogger();
+
 function downloadMetadataFile($url) {
     global $metadataSources, $verbose;
 
