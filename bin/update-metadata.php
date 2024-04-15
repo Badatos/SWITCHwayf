@@ -19,11 +19,11 @@ php update-metadata.php -help|-h
 php update-metadata.php --metadata-file <file> [--metadata-file <file>] \
     --metadata-idp-file <file> --metadata-sp-file <file> \
     [--verbose | -v] [--min-sp-count <count>] [--min-idp-count <count>] \
-    [--language <locale>] [--syslog] [--syslog-id <id>]
+    [--language <locale>]
 php update-metadata.php --metadata-url <url> [--metadata-url <url>] \
     --metadata-idp-file <file> --metadata-sp-file <file> \
     [--verbose | -v] [--min-sp-count <count>] [--min-idp-count <count>] \
-    [--language <locale>] [--syslog] [--syslog-id <id>]
+    [--language <locale>]
 
 Argument Description
 --------------------
@@ -38,8 +38,6 @@ Argument Description
                             entity category. Multiple categories
                             can be provided space separated. 
                             If the IdP is in none, the IdP is ignored.
---syslog                    Use syslog for reporting
---syslog-id <id>            Process identity for syslog messages
 --verbose | -v              Verbose mode
 --help | -h                 Print this man page
 
@@ -48,8 +46,15 @@ PAGE;
 
 $topLevelDir = dirname(__DIR__);
 
+if (isset($_SERVER['SWITCHWAYF_CONFIG'])) {
+    require_once($_SERVER['SWITCHWAYF_CONFIG']);
+} else {
+    require_once($topLevelDir . '/etc/config.php');
+}
+
 require_once($topLevelDir . '/lib/functions.php');
 require_once($topLevelDir . '/lib/readMetadata.php');
+
 
 // Script options
 $longopts = array(
@@ -62,8 +67,6 @@ $longopts = array(
     "filter-idps-by-ec:",
     "language:",
     "verbose",
-    "syslog",
-    "syslog-id:",
     "help",
 );
 
@@ -73,27 +76,27 @@ if (isset($options['help']) || isset($options['h'])) {
     exit($MAN);
 } 
 
+// Set default config options
+initConfigOptions();
+
+// Logger initialisation
+initLogger();
+
 // simple options
 $language = isset($options['language']) ? $options['language'] : 'en';
 $verbose  = isset($options['verbose']) || isset($options['v']) ? true : false;
-$syslog   = isset($options['syslog']) ? true : false;
-$syslogId = isset($options['syslog-id']) ? $options['syslog-id'] : 'SWITCHwayf';
-
-if ($syslog) {
-    openlog($syslogId, LOG_NDELAY, LOG_USER);
-}
 
 if (isset($options['metadata-url'])) {
     $metadataURL = $options['metadata-url'];
 } elseif (isset($options['metadata-file'])) {
     $metadataFile = $options['metadata-file'];
 } else {
-    reportError("Exiting: both --metadata-url and --metadata-file parameters missing\n");
+    logError("Exiting: both --metadata-url and --metadata-file parameters missing\n");
     exit(1);
 }
 
 if (!isset($options['metadata-sp-file'])) {
-    reportError("Exiting: mandatory --metadata-sp-file parameter missing\n");
+    logError("Exiting: mandatory --metadata-sp-file parameter missing\n");
     exit(1);
 } else {
     $metadataSPFile = $options['metadata-sp-file'];
@@ -101,7 +104,7 @@ if (!isset($options['metadata-sp-file'])) {
 }
 
 if (!isset($options['metadata-idp-file'])) {
-    reportError("Exiting: mandatory --metadata-idp-file parameter missing\n");
+    logError("Exiting: mandatory --metadata-idp-file parameter missing\n");
     exit(1);
 } else {
     $metadataIDPFile = $options['metadata-idp-file'];
@@ -120,7 +123,7 @@ if (isset($options['min-sp-count'])) {
     } elseif (preg_match('/^\d+$/', $options['min-sp-count'])) {
         $minSPCount = $options['min-sp-count'];
     } else {
-        reportError("Exiting: invalid value for --min-sp-count parameter\n");
+        logError("Exiting: invalid value for --min-sp-count parameter\n");
         exit(1);
     }
 } else {
@@ -139,7 +142,7 @@ if (isset($options['min-idp-count'])) {
     } elseif (preg_match('/^\d+$/', $options['min-idp-count'])) {
         $minIDPCount = $options['min-idp-count'];
     } else {
-        reportError("Exiting: invalid value for --min-idp-count parameter\n");
+        logError("Exiting: invalid value for --min-idp-count parameter\n");
         exit(1);
     }
 } else {
@@ -157,7 +160,7 @@ $metadataSources = array();
 // Input validation
 if (isset($metadataURL) && $metadataURL) {
     if (!ini_get('allow_url_fopen')) {
-        reportError("Exiting: allow_url_fopen disabled, unabled to download $metadataURL\n");
+        logError("Exiting: allow_url_fopen disabled, unabled to download $metadataURL\n");
         exit(1);
     }
     if (!is_array($metadataURL)) {
@@ -182,7 +185,7 @@ $metadataSProviders = array();
 
 foreach ($metadataSources as $source) {
     if ($verbose) {
-        reportInfo("Parsing metadata file $source\n");
+        logInfo("Parsing metadata file $source\n");
     }
     list($IDProviders, $SProviders) = parseMetadata($source, $language);
     $metadataIDProviders = array_merge($metadataIDProviders, $IDProviders);
@@ -193,17 +196,17 @@ foreach ($metadataSources as $source) {
 if (is_array($metadataIDProviders)){
     $IDPCount = count($metadataIDProviders);
     if ($IDPCount < $minIDPCount) {
-        reportError("Exiting: number of identity providers found ($IDPCount) lower than expected ($minIDPCount)\n");
+        logError("Exiting: number of identity providers found ($IDPCount) lower than expected ($minIDPCount)\n");
         exit(1);
     }
 
     if ($verbose) {
-        reportInfo("Dumping $IDPCount extracted identity providers to file $metadataIDPFile\n");
+        logInfo("Dumping $IDPCount extracted identity providers to file $metadataIDPFile\n");
     }
     dumpFile($metadataTempIDPFile, $metadataIDProviders, 'metadataIDProviders');
 
     if(!rename($metadataTempIDPFile, $metadataIDPFile)){
-        reportError("Exiting: could not rename temporary file $metadataTempIDPFile to $metadataIDPFile\n");
+        logError("Exiting: could not rename temporary file $metadataTempIDPFile to $metadataIDPFile\n");
         exit(1);
     }
 }
@@ -212,17 +215,17 @@ if (is_array($metadataIDProviders)){
 if (is_array($metadataSProviders)){
     $SPCount = count($metadataSProviders);
     if ($SPCount < $minSPCount) {
-        reportError("Exiting: number of service providers found ($SPCount) lower than expected ($minSPCount)\n");
+        logError("Exiting: number of service providers found ($SPCount) lower than expected ($minSPCount)\n");
         exit(1);
     }
 
     if ($verbose) {
-        reportInfo("Dumping $SPCount extracted service providers to file $metadataSPFile\n");
+        logInfo("Dumping $SPCount extracted service providers to file $metadataSPFile\n");
     }
     dumpFile($metadataTempSPFile, $metadataSProviders, 'metadataSProviders');
 
     if(!rename($metadataTempSPFile, $metadataSPFile)){
-        reportError("Exiting: could not rename temporary file $metadataTempSPFile to $metadataSPFile\n");
+        logError("Exiting: could not rename temporary file $metadataTempSPFile to $metadataSPFile\n");
         exit(1);
     }
 }
@@ -234,33 +237,9 @@ if (isset($metadataURL) && $metadataURL) {
         if (!$result) {
             $error = error_get_last();
             $message = $error['message'];
-            reportError("Exiting: could not delete temporary file $source: $message");
+            logError("Exiting: could not delete temporary file $source: $message");
             exit(1);
         }
-    }
-}
-
-if ($syslog) {
-    closelog();
-}
-
-function reportError($message) {
-    global $syslog;
-
-    if ($syslog) {
-        syslog(LOG_ERR, $message);
-    } else {
-        fwrite(STDERR, $message);
-    }
-}
-
-function reportInfo($message) {
-    global $syslog;
-
-    if ($syslog) {
-        syslog(LOG_INFO, $message);
-    } else {
-        fwrite(STDOUT, $message);
     }
 }
 
@@ -269,13 +248,13 @@ function downloadMetadataFile($url) {
 
     $file = tempnam(sys_get_temp_dir(), 'metadata');
     if ($verbose) {
-        reportInfo("Downloading metadata file from $url\n");
+        logInfo("Downloading metadata file from $url\n");
     }
     $result = @copy($url, $file);
     if (!$result) {
         $error = error_get_last();
         $message = explode(': ', $error['message'])[2];
-        reportError("Exiting: could not download $url: $message");
+        logError("Exiting: could not download $url: $message");
         exit(1);
     }
     array_push($metadataSources, $file);
@@ -288,12 +267,12 @@ function checkMetadataFile($file) {
         !file_exists($file)
         || filesize($file) == 0
         ) {
-        reportError("Exiting: file $file is empty or does not exist\n");
+        logError("Exiting: file $file is empty or does not exist\n");
         exit(1);
     }
 
     if (!is_readable($file)){
-        reportError("Exiting: file $file is not readable\n");
+        logError("Exiting: file $file is not readable\n");
         exit(1);
     }
 
