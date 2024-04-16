@@ -18,11 +18,11 @@ Usage
 php update-metadata.php -help|-h
 php update-metadata.php --metadata-file <file> [--metadata-file <file>] \
     --metadata-idp-file <file> --metadata-sp-file <file> \
-    [--verbose | -v] [--min-sp-count <count>] [--min-idp-count <count>] \
+    [--min-sp-count <count>] [--min-idp-count <count>] \
     [--language <locale>]
 php update-metadata.php --metadata-url <url> [--metadata-url <url>] \
     --metadata-idp-file <file> --metadata-sp-file <file> \
-    [--verbose | -v] [--min-sp-count <count>] [--min-idp-count <count>] \
+    [--min-sp-count <count>] [--min-idp-count <count>] \
     [--language <locale>]
 
 Argument Description
@@ -38,7 +38,6 @@ Argument Description
                             entity category. Multiple categories
                             can be provided space separated. 
                             If the IdP is in none, the IdP is ignored.
---verbose | -v              Verbose mode
 --help | -h                 Print this man page
 
 
@@ -66,7 +65,6 @@ $longopts = array(
     "min-sp-count:",
     "filter-idps-by-ec:",
     "language:",
-    "verbose",
     "help",
 );
 
@@ -84,7 +82,6 @@ initLogger();
 
 // simple options
 $language = isset($options['language']) ? $options['language'] : 'en';
-$verbose  = isset($options['verbose']) || isset($options['v']) ? true : false;
 
 if (isset($options['metadata-url'])) {
     $metadataURL = $options['metadata-url'];
@@ -184,9 +181,7 @@ $metadataIDProviders = array();
 $metadataSProviders = array();
 
 foreach ($metadataSources as $source) {
-    if ($verbose) {
-        logInfo("Parsing metadata file $source\n");
-    }
+    logDebug("Parsing metadata file $source");
     list($IDProviders, $SProviders) = parseMetadata($source, $language);
     $metadataIDProviders = array_merge($metadataIDProviders, $IDProviders);
     $metadataSProviders = array_merge($metadataSProviders, $SProviders);
@@ -200,9 +195,7 @@ if (is_array($metadataIDProviders)){
         exit(1);
     }
 
-    if ($verbose) {
-        logInfo("Dumping $IDPCount extracted identity providers to file $metadataIDPFile");
-    }
+    logDebug("Dumping $IDPCount extracted identity providers to file $metadataIDPFile");
     dumpFile($metadataTempIDPFile, $metadataIDProviders, 'metadataIDProviders');
 
     if(!rename($metadataTempIDPFile, $metadataIDPFile)){
@@ -219,9 +212,7 @@ if (is_array($metadataSProviders)){
         exit(1);
     }
 
-    if ($verbose) {
-        logInfo("Dumping $SPCount extracted service providers to file $metadataSPFile");
-    }
+    logDebug("Dumping $SPCount extracted service providers to file $metadataSPFile");
     dumpFile($metadataTempSPFile, $metadataSProviders, 'metadataSProviders');
 
     if(!rename($metadataTempSPFile, $metadataSPFile)){
@@ -246,12 +237,10 @@ if (isset($metadataURL) && $metadataURL) {
 releaseLogger();
 
 function downloadMetadataFile($url) {
-    global $metadataSources, $verbose;
+    global $metadataSources;
 
     $file = tempnam(sys_get_temp_dir(), 'metadata');
-    if ($verbose) {
-        logInfo("Downloading metadata file from $url");
-    }
+    logDebug("Downloading metadata file from $url");
     $result = @copy($url, $file);
     if (!$result) {
         $error = error_get_last();
