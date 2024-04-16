@@ -195,7 +195,7 @@ if (is_array($metadataIDProviders)){
         exit(1);
     }
 
-    logDebug("Dumping $IDPCount extracted identity providers to file $metadataIDPFile");
+    logInfo("Dumping $IDPCount extracted identity providers to file $metadataIDPFile");
     dumpFile($metadataTempIDPFile, $metadataIDProviders, 'metadataIDProviders');
 
     if(!rename($metadataTempIDPFile, $metadataIDPFile)){
@@ -212,7 +212,7 @@ if (is_array($metadataSProviders)){
         exit(1);
     }
 
-    logDebug("Dumping $SPCount extracted service providers to file $metadataSPFile");
+    logInfo("Dumping $SPCount extracted service providers to file $metadataSPFile");
     dumpFile($metadataTempSPFile, $metadataSProviders, 'metadataSProviders');
 
     if(!rename($metadataTempSPFile, $metadataSPFile)){
