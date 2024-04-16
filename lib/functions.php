@@ -153,6 +153,28 @@ function initConfigOptions()
     }
 }
 
+// Initializes default configuration options, for CLI usage
+function initConfigOptionsCLI()
+{
+    global $logDestination;
+    global $logFile;
+    global $logFacility;
+
+    // Set independet default configuration options
+    $defaults = array();
+    $defaults['logDestination'] = 'syslog';
+    $defaults['logFile'] = '/var/log/apache2/wayf.log';
+    $defaults['logPriority'] = LOG_USER;
+
+    // Initialize independent defaults
+    foreach ($defaults as $key => $value) {
+        if (!isset($$key)) {
+            $$key = $value;
+        }
+    }
+
+}
+
 /******************************************************************************/
 // Generates an array of IDPs using the cookie value
 function getIdPArrayFromValue($value)

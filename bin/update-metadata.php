@@ -75,7 +75,7 @@ if (isset($options['help']) || isset($options['h'])) {
 } 
 
 // Set default config options
-initConfigOptions();
+initConfigOptionsCLI();
 
 // Logger initialisation
 initLogger();
