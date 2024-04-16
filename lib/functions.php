@@ -159,12 +159,16 @@ function initConfigOptionsCLI()
     global $logDestination;
     global $logFile;
     global $logFacility;
+    global $metadataIDPFile;
+    global $metadataSPFile;
 
     // Set independet default configuration options
     $defaults = array();
     $defaults['logDestination'] = 'syslog';
     $defaults['logFile'] = '/var/log/apache2/wayf.log';
     $defaults['logPriority'] = LOG_USER;
+    $defaults['metadataIDPFile'] = 'IDProvider.metadata.php';
+    $defaults['metadataSPFile'] = 'SProvider.metadata.php';
 
     // Initialize independent defaults
     foreach ($defaults as $key => $value) {

@@ -17,11 +17,9 @@ Usage
 -----
 php update-metadata.php -help|-h
 php update-metadata.php --metadata-file <file> [--metadata-file <file>] \
-    --metadata-idp-file <file> --metadata-sp-file <file> \
     [--min-sp-count <count>] [--min-idp-count <count>] \
     [--language <locale>]
 php update-metadata.php --metadata-url <url> [--metadata-url <url>] \
-    --metadata-idp-file <file> --metadata-sp-file <file> \
     [--min-sp-count <count>] [--min-idp-count <count>] \
     [--language <locale>]
 
@@ -29,8 +27,6 @@ Argument Description
 --------------------
 --metadata-url <url>        SAML2 metadata URL
 --metadata-file <file>      SAML2 metadata file
---metadata-idp-file <file>  File containing service providers 
---metadata-sp-file <file>   File containing identity providers 
 --min-idp-count <count>     Minimum expected number of IdPs in metadata
 --min-sp-count <count>      Minimum expected number of SPs in metadata
 --language <locale>         Language locale, e.g. 'en', 'jp', ...
@@ -90,22 +86,6 @@ if (isset($options['metadata-url'])) {
 } else {
     logError("Exiting: both --metadata-url and --metadata-file parameters missing");
     exit(1);
-}
-
-if (!isset($options['metadata-sp-file'])) {
-    logError("Exiting: mandatory --metadata-sp-file parameter missing");
-    exit(1);
-} else {
-    $metadataSPFile = $options['metadata-sp-file'];
-    $metadataTempSPFile = $metadataSPFile.'.swp';
-}
-
-if (!isset($options['metadata-idp-file'])) {
-    logError("Exiting: mandatory --metadata-idp-file parameter missing");
-    exit(1);
-} else {
-    $metadataIDPFile = $options['metadata-idp-file'];
-    $metadataTempIDPFile = $metadataIDPFile.'.swp';
 }
 
 if (isset($options['min-sp-count'])) {
@@ -195,6 +175,7 @@ if (is_array($metadataIDProviders)){
         exit(1);
     }
 
+    $metadataTempIDPFile = $metadataIDPFile.'.swp';
     logInfo("Dumping $IDPCount extracted identity providers to file $metadataIDPFile");
     dumpFile($metadataTempIDPFile, $metadataIDProviders, 'metadataIDProviders');
 
@@ -212,6 +193,7 @@ if (is_array($metadataSProviders)){
         exit(1);
     }
 
+    $metadataTempSPFile = $metadataSPFile.'.swp';
     logInfo("Dumping $SPCount extracted service providers to file $metadataSPFile");
     dumpFile($metadataTempSPFile, $metadataSProviders, 'metadataSProviders');
 
