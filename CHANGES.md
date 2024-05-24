@@ -11,7 +11,7 @@ Bundled with:
 
 * JQuery v3.7.1
 * ImprovedDropDown v1.0.2 (with modifications)
-* Select2 v4.0.6-rc.0 and i18n files for languages supported by SWITCHwayf
+* Select2 v4.0.13 and i18n files for languages supported by SWITCHwayf
 
 Find below the changes for past releases of the SWITCHwayf and in the credits
 sections the people who contributed to the SWITCHwayf.
