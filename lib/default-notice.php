@@ -5,15 +5,18 @@
 <form id="IdPList" name="IdPList" method="post" onSubmit="return checkForm()" action="<?php echo $actionURL ?>">
     <div id="userInputArea">
         <p class="promptMessage"><?php echo getLocalString('confirm_permanent_selection'); ?></p>
-        <p><?php echo getLocalString('permanent_cookie_notice'); ?></p>
+        <p><label for="userIdPSelection_iddtext">
+            <?php echo getLocalString('permanent_cookie_notice'); ?>
+        </label></p>
         <div style="text-align: center">
-            <select name="permanent_user_idp" id="userIdPSelection" class="userIdPSelectionNotice" >
+            <select name="permanent_user_idp" id="userIdPSelection" class="userIdPSelectionNotice"
+                    aria-label="<?php echo getLocalString('permanent_cookie_notice'); ?>">
                         <option value="<?php echo $permanentUserIdP ?>" logo="<?php echo $permanentUserIdPLogo ?>"><?php echo $permanentUserIdPName ?></option>
             </select>
-            <input type="submit" accesskey="c" name="clear_user_idp" value="<?php echo getLocalString('delete_permanent_cookie_button') ?>">
+            <input type="submit" name="clear_user_idp" value="<?php echo getLocalString('delete_permanent_cookie_button') ?>">
             <?php if (isValidShibRequest()) : ?>
             <br /><br />
-            <input type="submit" accesskey="s" name="Select" name="permanent" value="<?php echo getLocalString('goto_sp') ?>">
+            <input type="submit" name="Select" name="permanent" value="<?php echo getLocalString('goto_sp') ?>">
             <?php endif ?>
             <p>
             <?php $scriptURL = sprintf("%s://%s%s", isset($_SERVER['HTTPS'])?"https":"http", $_SERVER['HTTP_HOST'], $_SERVER['PHP_SELF']);

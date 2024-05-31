@@ -17,7 +17,7 @@
 ?>
             </select>
 
-            <input type="submit" name="Select" accesskey="s" value="<?php echo getLocalString('select_button') ?>">
+            <input type="submit" name="Select" value="<?php echo getLocalString('select_button') ?>">
         </div>
         <div  style="text-align: left">
             <p class="selectOptions">

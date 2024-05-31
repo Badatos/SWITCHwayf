@@ -1,6 +1,6 @@
-<?php // Copyright (c) 2024, Switch?>
+<?php // Copyright (c) 2024, Switch ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="<?php echo $language ?>">
 <head>
     <title><?php echo getLocalString('title') ?></title>
     <!-- WAYF instance: <?php echo gethostname(); ?> -->
@@ -154,7 +154,8 @@
                 iconPath:'<?php echo $imageURL ?>/drop_icon.svg',
                 noMatchesText: '<?php echo getLocalString('no_idp_found', 'js') ?>',
                 noItemsText: '<?php echo getLocalString('no_idp_available', 'js') ?>',
-                disableRemoteLogos: <?php echo ($disableRemoteLogos) ? 'true' : 'false' ?>
+                disableRemoteLogos: <?php echo ($disableRemoteLogos) ? 'true' : 'false' ?>,
+                label: searchText
             });
             // Ajust height of submit button to select
             $('[name="Select"]').height($('#userIdPSelection').outerHeight()+2);
@@ -176,7 +177,7 @@
 
 <div id="container">
     <div class="box">
-        <div id="header">
+        <header id="header">
             <?php if (!empty($logoURL)) {
         ?>
             <a href="<?php echo sprintf($federationURL, $language) ?>"><img src="<?php echo $logoURL ?>" alt="Federation Logo" id="federationLogo"></a>
@@ -187,7 +188,7 @@
             <a href="<?php echo sprintf($organizationURL, $language) ?>"><img src="<?php echo $organizationLogoURL ?>" alt="Organization Logo" id="organisationLogo"></a>
             <?php
     } ?>
-        </div>
+        </header>
             <div id="content">
                 <ul class="menu">
                     <?php if (!empty($federationURL) && getLocalString('about_federation') != '') {

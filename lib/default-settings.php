@@ -5,7 +5,9 @@
 <form id="IdPList" name="IdPList" method="post" onSubmit="<?php echo printSubmitAction() ?>" action="<?php echo $actionURL ?>">
     <div id="userInputArea">
         <p class="promptMessage"><?php echo getLocalString('permanent_cookie'); ?></p>
-        <p><?php echo getLocalString('select_idp'); ?></p>
+        <p><label for="userIdPSelection">
+            <?php echo getLocalString('select_idp'); ?>
+        </label></p>
         <div style="text-align: center">
             <select name="user_idp" id="userIdPSelection" class="userIdPSelection" tabindex="0">
 <?php
@@ -17,7 +19,7 @@
 ?>
             </select>
 
-            <input type="submit" name="Select" accesskey="s" value="<?php echo getLocalString('save_button') ?>" >
+            <input type="submit" name="Select" value="<?php echo getLocalString('save_button') ?>" >
         </div>
         <!-- Value permanent must be a number which is equivalent to the days the cookie should be valid -->
         <input name="permanent" type="hidden" value="100">

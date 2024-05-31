@@ -1457,7 +1457,7 @@
 
 
       // Draw submit button
-      writeHTML('<input id="wayf_submit_button" type="submit" name="Login" accesskey="s" value="' + wayf_overwrite_submit_button_text + '" style="float: right; margin-top:6px;">');
+      writeHTML('<input id="wayf_submit_button" type="submit" name="Login" value="' + wayf_overwrite_submit_button_text + '" style="float: right; margin-top:6px;">');
 
       // Close form
       writeHTML('</form>');

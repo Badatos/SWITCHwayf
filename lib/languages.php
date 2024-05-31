@@ -35,7 +35,7 @@ $langStrings['en']['faq'] = 'FAQ'; // This string can be hidden by setting it to
 $langStrings['en']['help'] = 'Help';// This string can be hidden by setting it to ''
 $langStrings['en']['privacy'] = 'Data Privacy'; // This string can be hidden by setting it to ''
 $langStrings['en']['title'] = 'Organisation Selection';
-$langStrings['en']['header'] = 'Select your organisation'; 
+$langStrings['en']['header'] = 'Select your organisation';
 $langStrings['en']['make_selection'] = 'You must select an organisation.';
 $langStrings['en']['settings'] = 'Default organisation for this web browser';
 $langStrings['en']['permanent_select_header'] = 'Permanently set your organisation';
@@ -78,7 +78,7 @@ $langStrings['en']['last_used'] = 'Last used';
 
 // Read note on line 16 how to properly customize locales so that they survive updates
 //$langStrings['de']['about_federation'] = '&Uuml;ber Föderation';  // This string can be hidden by setting it to ''
-//$langStrings['de'][''] = '&Uuml;ber Föderationsbetreiber';  // This string can be hidden by setting it to ''
+//$langStrings['de']['about_organisation'] = '&Uuml;ber Föderationsbetreiber';  // This string can be hidden by setting it to ''
 //$langStrings['de']['additional_info'] = 'Add some additional information and for example a <a href="javascript:alert(\'Customize me in languages.php\')">link</a> you want to display.';  // This string can be hidden by setting it to ''
 
 // Generic strings
@@ -312,6 +312,10 @@ $langStrings['ja']['no_idp_found'] = 'この検索キーでは機関が見つか
 $langStrings['ja']['no_idp_available'] = '利用できる機関がありません';
 $langStrings['ja']['last_used'] = '前回利用';
 
+
+// ****************************
+//          Turkish
+// ****************************
 
 // In particular you might want to override these three locales or set the
 // to an empty string in order to hide them if they are not needed.

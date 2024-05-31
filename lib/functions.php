@@ -6,7 +6,7 @@ This file contains common functions of the SWITCHwayf
 ******************************************************************************
 */
 
-// Initilizes default configuration options if they were not set already
+// Initializes default configuration options if they were not set already
 function initConfigOptions()
 {
     global $defaultLanguage;

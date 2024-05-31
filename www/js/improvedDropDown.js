@@ -69,6 +69,7 @@ var suspendTextBoxExitHandler = false;
                     var iconPath='./img/dropIcon.png';
                     var noMatchesText='No Matches';
                     var noItemsText='No Items Available';
+                    var label='Enter the name of the organisation you are affiliated with...';
 					var disableRemoteLogos=false;
 
 					if (arguments.length === 1) {
@@ -77,6 +78,7 @@ var suspendTextBoxExitHandler = false;
                       if ('noItemsText' in value) {noItemsText = value.noItemsText.toString();}
 						if ('disableRemoteLogos' in value) {disableRemoteLogos = value.disableRemoteLogos;}
 						if ('enableValueMatching' in value) {enableValueMatching = value.enableValueMatching;}
+                      if ('label' in value) {label = value.label.toString();}
                     }
 
                 this.each(function () {
@@ -90,6 +92,7 @@ var suspendTextBoxExitHandler = false;
                     wrapperControl.append(newImgElement);
 
                     var newTextElement = getTextElement(thisElement, newImgElement);
+                    newTextElement.attr("aria-label", label);
                     wrapperControl.prepend(newTextElement);
 
                     var newListControl = getListElement(thisElement);
@@ -461,7 +464,6 @@ function getListGroupItem(label,visible) {
 }
 
 function populateListItem(newListControl, optionItem) {
-    var title = '';
 
 	var noImage = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 	var loadingImage = 'data:image/gif;base64,R0lGODlhEAAQAPIAAM7a5wAAAJ2msDU4PAAAAE9UWWlvdnZ9hCH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==';
@@ -483,13 +485,12 @@ function populateListItem(newListControl, optionItem) {
 
     if (isOptGroup(optionItem.parent())) {
         newListItem.addClass('idd_listItem_Nested');
-        title = optionItem.parent().attr('label') + ': ';
+        newListItem.attr('title',
+            optionItem.parent().attr('label') + ': ' + newListItem.text()
+        );
     }
 
-    title += newListItem.text();
-
     newListItem.attr('savedValue', optionItem.val())
-               .attr('title', title)
                .css('white-space','nowrap')
                .css('cursor','pointer');
 
